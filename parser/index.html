@@ -1089,6 +1089,39 @@ $('.js_set_item').on('click',function(e){
 
 /**PARSE LIST**/
 
+
+
+
+
+
+var Home = {
+    controller: function() {
+        return {
+            onunload: function() {
+                console.log("unloading home component");
+            }
+        };
+    },
+    view: function() {
+        return m("div", "Home")
+    }
+};
+
+var Dashboard = {
+    controller: function() {},
+    view: function() {}
+};
+
+m.route.mode = "hash";
+//m.route.mode = "search";
+//go to the default route (home)
+m.route(document.body, "/", {
+    "/x": Home,
+    "/dashboard": Dashboard,
+});
+
+//re-route to dashboard
+//m.route("/dashboard"); // logs "unloading home"
 </script>
   </body>
 </html>
