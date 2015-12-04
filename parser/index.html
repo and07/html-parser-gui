@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8">
@@ -70,6 +70,7 @@ jQuery.ajax = function (d) {
     }
 }(jQuery.ajax);
 */
+
 function addScript(el,url,param){
 	param = param || "";
 	var script = el.createElement("script");
@@ -142,6 +143,10 @@ function request(url,callback) {
   </head>
   <body>
 
+
+
+<!-- PARSER LIST -->
+<template id="js_parse_list">
 <div id="main">
 	<div id="header">
 	<div class="container-fluid">
@@ -157,8 +162,6 @@ function request(url,callback) {
 	</div><!-- header -->
 </div>	
 <div class="clear"></div>
-
-<!-- PARSER LIST -->
 <div class="container-fluid">
 	<div class="span2">
 		<div class="right-panel hint">
@@ -194,9 +197,10 @@ function request(url,callback) {
 			</div>
 		</div>
 	</div>
-
-
+<template>
 <!-- PARSER LIST -->
+
+
 <!-- DEL PARSE -->				
 <div id="deleteParseModal" class="modal fade">
 	<div class="modal-dialog">
@@ -982,7 +986,7 @@ function getParserData(){
 	return [
 		{'id':'1', 'name':'habrahabr.ru','url':'http://habrahabr.ru/','date_edit':'22.05.2015'},
 		{'id':'2', 'name':'test','url':'http://test.te','date_edit':'22.05.2015'}
-	]
+	];
 }
 function addParseList(){
 	var parser = getParserData();
@@ -1107,17 +1111,42 @@ var Home = {
     }
 };
 
-var Dashboard = {
+
+var ParseList = {
+    controller: function() { console.log(document.querySelector('#js_parse_list').innerHTML);  },
+    view: function() {return m('div', m.trust('ddfghfgh'));}
+};
+var ParseCreate = {
     controller: function() {},
     view: function() {}
 };
-
-m.route.mode = "hash";
+var ParseEdit = {
+    controller: function() {},
+    view: function() {}
+};
+var ParseDelete = {
+    controller: function() {},
+    view: function() {}
+};
+var ParseSetting = {
+    controller: function() {},
+    view: function() {}
+};
+var ParseResult = {
+    controller: function() {},
+    view: function() {}
+};
+//m.route.mode = "hash";
 //m.route.mode = "search";
-//go to the default route (home)
 m.route(document.body, "/", {
-    "/x": Home,
-    "/dashboard": Dashboard,
+	"/": Home,
+	"/parse/list/": ParseList,
+	"/parse/create/" : ParseCreate,
+	"/parse/edit/" : ParseEdit,
+	"/parse/delete/" : ParseDelete,
+	"/parse/setting/" : ParseSetting,
+	"/parse/result/" : ParseResult,
+
 });
 
 //re-route to dashboard
