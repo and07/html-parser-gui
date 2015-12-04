@@ -1,0 +1,1091 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>Bootstrap 101 Template</title>
+
+    <!-- Bootstrap -->
+    <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/icon.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+	
+	<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+	
+	<!-- http://jsfiddle.net/jcosnn6u/3/ -->
+	<link rel="stylesheet" href="http://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+	<script src="http://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="bootstrap/js/bootstrap.min.js"></script>
+	
+	<!-- https://select2.github.io/ -->
+	<link href="js/select2/dist/css/select2.min.css" rel="stylesheet" />
+	<script src="js/select2/dist/js/select2.min.js"></script>
+
+	<!-- http://www.listjs.com/ -->
+	<script type="text/javascript" src="js/list.js"></script>
+
+	<!-- https://github.com/finom/vanillatree -->
+	<link href="js/vanillatree/vanillatree.css" rel="stylesheet" />
+	<script src="js/vanillatree/vanillatree.js"></script>
+	
+	<link  href="datepicker/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
+	<script src="datepicker/js/bootstrap-datetimepicker.min.js"></script>
+<script>
+
+//http://javascript.ru/forum/dom-window/21288-nuzhna-pomoshh-s-ochen-prostymi-veshhami-3.html
+jQuery.ajax = function (d) {
+    var b = location.protocol,
+        e = RegExp(b + "//" + location.hostname),
+        f = "http" + (/^https/.test(b) ? "s" : "") + "://query.yahooapis.com/v1/public/yql?callback=?";
+    return function (a) {
+        var c = a.url;
+        if (/get/i.test(a.type) && !/json/i.test(a.dataType) && !e.test(c) && /:\/\//.test(c)) {
+            a.url = f;
+            a.dataType = "json";
+            a.data = {
+                q: 'select * from html where url="{URL}" and xpath="*"'.replace("{URL}", c + (a.data ? (/\?/.test(c) ? "&" : "?") + jQuery.param(a.data) : "")),
+                format: "xml"
+            };
+            !a.success && a.complete && (a.success = a.complete, delete a.complete);
+            var b = a.success;
+            a.success = function (a) {
+                b && b.call(this, {
+                    responseText: (a.results[0] || "").replace(/<script[^>]+?\/>|<script(.|\s)*?\/script>/gi, "")
+                }, "success")
+            }
+        }
+        return d.apply(this, arguments)
+    }
+}(jQuery.ajax);
+
+function addScript(el,url,param){
+	param = param || "";
+	var script = el.createElement("script");
+	script.src = url+'/'+param;
+	script.async = true;
+	el.getElementsByTagName("head")[0].appendChild(script);
+};
+
+var jsonp_set_html = function(data) {
+	_PARSE.golink = false;
+	console.log(data);
+	var html = populateIframe('html', data.res);
+	setEvenHoveredAll(html);
+	removeClass(document.querySelector('#golink'),'active');
+	Loading.close();
+};
+	
+function request(url,callback) {
+	Loading.show();
+	callback = callback||null;
+	if(callback === null){
+		callback = function(res) {
+			_PARSE.golink = false;
+			var html = populateIframe('html', res.responseText);
+			setEvenHoveredAll(html);
+			removeClass(document.querySelector('#golink'),'active');
+			Loading.close();
+		};
+	}
+	$.ajax({
+		url: url,
+		type: 'GET',
+		success: callback
+	});
+	addScript(document,'https://peaceful-retreat-5894.herokuapp.com/get-content/habrahabr.ru','?jsonp_callback=jsonp_set_html');
+
+}	
+
+</script>
+
+<style>
+#htmltree-content {
+	margin-bottom: 10px;
+	border: 1px solid #DDDDDD;
+	overflow: auto;
+	height: 69%;
+	width: 98%;
+}
+
+#htmltree-content ul {
+	list-style: none;
+}
+
+#htmltree-content .plus {
+	margin-right: 5px;
+}
+
+#htmltree-content li {
+	cursor: pointer;
+}
+
+#htmltree-content .selected {
+	background: black;
+	color: white;
+}
+
+</style>
+  </head>
+  <body>
+
+<div id="main">
+	<div id="header">
+	<div class="container-fluid">
+		<div id="userinfo">
+			<!--prio@hotbox.ru&nbsp;&nbsp;|&nbsp;&nbsp;<a target="_blank" href="#/ru/docs">Документация</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="#/ru/site/logout">Выход</a>	-->	
+		</div>
+		<div id="logo">
+			<a href="/">
+				<h1>Parser</h1>
+			</a>
+		</div>
+	</div>	
+	</div><!-- header -->
+</div>	
+<div class="clear"></div>
+
+<!-- PARSER LIST -->
+<div class="container-fluid">
+	<div class="span2">
+		<div class="right-panel hint">
+			Это список ваших парсеров.		
+		</div>	
+	</div>
+</div>
+	
+<div class="clear"></div>
+	<div class="title">Sites</div>
+	<div class="container-fluid">
+		<div class="right-panel">
+			<a href="#"   class="btn btn-primary btn-lg" data-toggle="modal" data-target="#createParseModal" rel="tooltip" data-original-title="Create"><i class="icon-plus"></i>&nbsp;Создать парсер</a>
+		</div>
+	</div>
+	<br>
+	<div class="container-fluid">
+		<div id="tabList" class="tab-pane active">
+			<div class="">
+				<div id="parser_list" class="grid-view">
+					<input type="text" class="search" placeholder="Search" />
+					<ul class="head_list">
+							<li class="">
+								<span class="sort col_5" data-sort="name" id="yw0_c1"><a >id<span class="caret"></span></a></span>
+								<span class="sort col_5" data-sort="name" id="yw0_c1"><a >Название сайта<span class="caret"></span></a></span>
+								<span class="sort col_5" data-sort="url"  id="yw0_c2"><a >URL сайта<span class="caret"></span></a></span>
+								<span class="sort col_5" data-sort="date_edit" id="yw0_c3"><a>Изменено<span class="caret"></span></a></span>
+								<span class="button-column col_5" id="yw0_c4"> </span>
+							</li>
+					</ul>
+					<ul class="list"></ul>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+<!-- PARSER LIST -->
+<!-- DEL PARSE -->				
+<div id="deleteParseModal" class="modal fade">
+	<div class="modal-dialog">
+		<div class="modal-content">
+				<div class="modal-header">
+					<a class="close" data-dismiss="modal">×</a>
+					<h3>Удаление парсера <span class="js_parse_name"></span></h3>
+				</div>
+				<div class="modal-body">
+					<input type="hidden" name="scrid" id="js_scrid" value="">
+					<p>Вы действительно хотите удалить парсер?</p>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+					<button type="button" class="btn btn-primary js_site_del" data-dismiss="modal">Save changes</button>
+				</div>
+		</div>
+	</div>
+</div>
+<!-- DEL PARSE-->	
+
+
+<!-- CREATE PARSE -->	
+<div id="createParseModal" class="modal fade modal-draggable" tabindex="-1" role="dialog" aria-labelledby="CREATE PARSE" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<a class="close" data-dismiss="modal">×</a>
+				<h3>Создать парсер <span class="js_parse_id"></span></h3>
+			</div>
+			<div class="modal-body">
+				<form class="form1 form-vertical" id="form"  method="post"> 
+				<div class="form-group">
+					<label for="js-name-field" class="required">Название <span class="required">*</span></label>
+					<input class="form-control" name="name-field" id="js-name-field" type="text" placeholder="name">
+				</div>
+				<div class="form-group">
+					<label for="js-url-field" class="required">Стартовая страница <span class="required">*</span></label>
+					<input class="form-control" name="url-field" id="js-url-field" type="text" placeholder="site.ru">
+				</div>
+				<br>
+				</form>
+			</div>
+			<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+					<button type="button" class="btn btn-primary js_site_save" data-dismiss="modal">Save changes</button>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- CREATE PARSE-->
+
+<!-- RUN PARSE-->
+<div id="runParseModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="RUN PARSE" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+					<div class="modal-header">
+						<a class="close" data-dismiss="modal">×</a>
+						<h3>Управление запуском <span class="js_parse_name"></span></h3>
+					</div>
+					<div class="modal-body">
+						<div>
+							<fieldset>
+								<input type="hidden" name="scrid" id="js_scrid" value="">
+								<input type="radio" name="runtype" value="single" checked="checked">&nbsp;Одиночный запуск			<br><br>
+								<input type="radio" name="runtype" value="shedule">&nbsp;Запуск по расписанию			
+								<table id="shedulesetup" style="margin-left: 40px;">
+									<tbody>
+									<tr>
+										<td style="width: 120px;"><span class="left-td">Начать в</span></td>
+										<td>
+
+<div id="" class="datetimepicker input-append date">
+	<input data-format="dd/MM/yyyy hh:mm:ss" type="text"></input><span class="add-on"><i style="display: inline-block;" data-time-icon="icon-time" data-date-icon="icon-calendar"></i></span>
+</div>
+
+										</td>
+									</tr>
+									<tr>
+										<td style="width: 120px;"><span class="left-td">Повторять</span></td>
+										<td><select name="repeat">
+												<option value="hour">каждый час</option>
+												<option value="3hour">каждые 4 часа</option>
+												<option value="8hour">каждые 8 часов</option>
+												<option value="12hour">каждые 12 часов</option>
+												<option value="day">каждые 24 часа</option>
+												<option value="3day">каждые 3 дня</option>
+												<option value="week">каждые 7 дней</option>
+												<option value="2week">каждые 2 недели</option>
+												<option value="month">каждый месяц</option>
+											</select>
+										</td>
+									</tr>
+									</tbody>
+								</table>
+							</fieldset>
+							<fieldset>
+								<legend>Статус</legend>
+								<span class="runstatus" id="notrun" style="display: inline;">не выполняется</span>
+								<span class="runstatus" id="run" style="display: none;">выполняется</span>
+								<span class="runstatus" id="wait" style="display: none;">ожидает запуска</span>
+								<span class="runstatus" id="waitshed" style="display: none;">ожидает запуска по расписанию</span>
+								<span class="runstatus" id="limit" style="display: none;">превышен лимит</span>
+								<span class="myprogressbar" style="float: right; width: 200px;"><span style="width: 0%;">&nbsp;</span></span>
+							</fieldset>
+						</div>
+					</div>
+					<div class="modal-footer">
+							<button id="btnrun" class="btn btn-large js_btnrun"><i class="icon-play"></i>&nbsp;Запуск</button>
+							<button id="btnstop" class="btn btn-large js_btnstop" style="display: none;"><i class="icon-stop"></i>&nbsp;Стоп</button>
+					</div>
+		</div>
+	</div>
+</div>
+<!-- RUN PARSE-->
+
+<!-- RESULT PARSE-->
+<div id="resultParseModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="RUN PARSE" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+					<div class="modal-header">
+						<a class="close" data-dismiss="modal">×</a>
+						<h3>Результат выполнения <span class="js_parse_name"></span></h3>
+					</div>
+					<div class="modal-body">
+						<input type="hidden" name="scrid" id="js_scrid" value="">
+							<fieldset style="overflow: hidden;">
+						<span class="line">
+							Парсер:&nbsp;<span id="scrname" class="js_parse_name"></span>
+							<span style="width: 100px; display: inline-block;">&nbsp;</span>
+							Стартовая страница:&nbsp;<span id="startpage" class="js_url"></span>
+						</span>
+						<br>
+						Последний запуск:&nbsp;<span id="lastrun" ></span>
+					</fieldset>
+					<fieldset>
+						<legend>Вывод</legend>
+						<div id="runoutput" style="overflow: auto; height: 150px; font-size: 12px;"></div>
+					</fieldset>
+					<fieldset>
+						<legend>Файлы</legend>
+						<div style="overflow: auto; height: 150px; padding: 0; margin: 0">
+							<table id="files" class="table table-striped table-condensed" style="width: 50%; float: left">
+								<!-- <thead>
+									<tr>
+										<td style="width: 300px">Имя файла</td>
+										<td></td>
+									</tr>
+								</thead> -->
+								<tbody></tbody>
+							</table>
+							&nbsp;&nbsp;&nbsp;
+						</div>
+					</fieldset>
+					</div>
+					<div class="modal-footer">
+							<button id="zip" class="btn btn-small js_res_save" >Сохранить все</button>			
+							<button id="delall" class="btn btn-small js_res_del" >Удалить все</button>
+					</div>
+			</div>
+	</div>
+</div>
+<!-- RESULT PARSE-->
+
+
+<!-- EDIT PARSE -->
+<div id="editParseModal" class="modal fade bs-example-modal-lg modal-wide"   tabindex="-1" role="dialog" aria-labelledby="EDIT PARSE" aria-hidden="true">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+					<div class="modal-header">
+						<a class="close" data-dismiss="modal">×</a>
+						<h3>Edit <span class="js_parse_name"></span></h3>
+					</div>
+					<div class="modal-body" style="max-height:80%;">
+									
+<div class="tabbable tabs-right">
+		<ul id="sidetabs" class="nav nav-tabs">
+			<li class="active"><a id="tab-browser" data-toggle="tab" href="#tabBrowser">Браузер</a></li>
+			<li><a id="tab-rule"  data-toggle="tab" href="#tabRule" onclick="tabRuleClick();">Rule</a></li>
+			<li><a id="tab-html"  data-toggle="tab" href="#tabHTML" >HTML code</a></li>
+		</ul>
+		
+		<div class="tab-content">
+			<div id="tabBrowser" class="tab-pane active">
+				<form class="form-inline">
+					<div class="form-group">
+							<input type="checkbox" name="base" id="js_base_btn">BaseTag
+					</div>
+				</form>
+				
+				<div id="panel">
+					<div class="_form-inline" style="float:left; margin-right:30px;">
+						<input type="text" name="url" class="js_url" value="" placeholder="Введите url страницы" style="width: 300px;"/>
+						<button class="btn js_loadpage_nourl" title="Обновить страницу"><i class="icon-repeat"></i></button>
+					</div>
+					<div class="btn-toolbar">
+						<div class="btn-group" data-toggle="buttons-radio">
+<!--
+							<button id="seltext" class="btn btn-width"><i class="icon-align-left"></i>&nbsp;Текст</button>						
+							<button id="selimg" class="btn btn-width"><i class="icon-picture"></i>&nbsp;Картинка</button>
+							<button id="sellink" class="btn btn-width"><i class="icon-font"></i>&nbsp;Ссылка</button>
+							<button id="selhtml" class="btn btn-width"><i class="icon-chevron-left"></i><i class="icon-chevron-right"></i>&nbsp;HTML</button>
+-->
+							<button id="golink" class="btn"><i class="icon-share-alt"></i>&nbsp;Загрузить ссылку</button>
+							
+						</div>
+					</div>
+				</div>
+				
+				<div id="iframes">
+					<div id="hovered-element" ><div id="hovered-element-info"></div></div>					
+					<iframe id="html" name="html" width="99%" height="350" ></iframe>
+				</div>
+				
+				<div id="rules-container">
+					<div id="" class="js_items" ></div>
+<!--
+				<table id="rulestbl" class="table table-striped table-bordered">
+					<thead>
+						<tr>
+							<th style="width: 15px;"></th>
+							<th style="width: 100px;">Имя</th>
+							<th style="width: 80px;">Тип</th>
+							<th style="width: 80px;">Группа</th>
+							<th>XPath</th>
+							<th style="width: 80px;"></th>
+						</tr>
+					</thead>
+					<tbody>
+					</tbody>
+				</table>
+-->
+				</div>
+				
+			</div>
+			
+			<div id="tabRule" class="tab-pane ">
+				<div id="script-container">			
+					<textarea id="script" class="ldt-input js_rule_res" wrap="off" spellcheck="false" style="margin: 0px; width: 1151px;  height: 431px;"></textarea>
+				</div>
+			</div>
+
+			<div id="tabHTML" class="tab-pane ">
+				<div style="height: 400px;">	
+					<textarea id="js_tpl" class="ldt-input" wrap="off" spellcheck="false"></textarea>
+				</div>
+			</div>			
+			
+		</div>
+	</div>
+					</div>
+				<div class="modal-footer">
+					<button class="btn js_save_rule"  >Сохранить</button>
+					<button id="btnclose" class="btn" >Закрыть</button>
+					<!--	<a data-dismiss="modal" id="add-btn" class="btn" href="/create/" >OK</a>    <a data-dismiss="modal" id="cancel-del-btn" class="btn" href="#">Отмена</a> -->
+				</div>
+		</div>
+	</div>				
+</div>				
+
+<!-- EDIT PARSE -->
+
+<!-- ITEM NAME PARSE -->
+<div id="itemNameParseModal" class="modal fade modal-draggable"   tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<a class="close" data-dismiss="modal">×</a>
+			</div>
+			<div class="modal-body">
+				<form class="form-inline">
+					<div class="form-group">
+						<label for="exampleInputName1">Name</label>
+						<input type="text" id="exampleInputName1" class = "js_name" name="name" placeholder="Jane Doe" />
+					</div>
+					<div class="form-group">
+						<label for="exampleInputName2">Тип</label>
+						<select class="form-control type js_type selattr" name="type" id="exampleInputName2">
+							<option value=""></option>
+							<option value="link">Ссылка</option>
+							<option value="text">Текст</option>
+							<option value="html">HTML</option>
+							<option value="img">Картинка</option>
+							<option value="table">table</option>
+						</select>
+					</div>
+					<div class="form-group">
+						<label for="exampleInputName3">Parent</label>
+						<select class="form-control parent js_parent selattr" id="exampleInputName3" name="parent" style="width:50px;" >
+							<option value=""></option>
+						</select>
+					</div>
+					<button class="btn js_set_item" >OK</button>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- ITEM NAME PARSE -->
+
+<!-- EDIT XPATH PARSE -->
+<div id="ruleEditParseModal" class="modal fade"   tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+					<div class="modal-header">
+						<a class="close" data-dismiss="modal">×</a>
+						<h3></h3>
+					</div>
+					<div class="modal-body">
+						<div id="labels">
+							<span id="rulename"></span>&nbsp;&nbsp;&nbsp;&nbsp;
+							<span class="label" id="text">Текст</span>
+							<span class="label" id="link">Ссылка</span>
+							<span class="label" id="image">Картинка</span>
+							<span class="label" id="regexp">RegExp</span>
+							<span class="label" id="htmltype">HTML</span>
+						</div>
+						<textarea name="xpath" spellcheck="false"></textarea>
+						<input type="hidden" name="name" />
+						<div>
+							<button class="btn" onclick="cancelRuleXPath();" style="float:right; margin-left:10px;">Отмена</button>
+							<button class="btn" onclick="setRuleXPath();" style="float:right;">OK</button>
+						</div>
+					</div>
+		</div>
+	</div>
+</div>
+<!-- EDIT XPATH PARSE -->
+
+<!-- EXPORT PARSE -->
+<div id="pageExportParseModal" class="modal fade"   tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<a class="close" data-dismiss="modal">×</a>
+				<h3>Правило экспорта для страницы</h3>
+			</div>
+			<div class="modal-body">
+				<div id="pageexport-list">
+					<div>
+						<div style="float: right;"><button onclick="pageExportListNew();" class="btn"><i class="icon-plus"></i>&nbsp;Добавить</button></div>
+					</div>
+					<div style="clear: both;"></div>
+					<div id="pageexport-list-table">
+						<table class="table">
+							<thead>
+								<tr>
+									<td style="width: 40px;">#</td>
+									<td style="width: 100px;">Профиль</td>
+									<td style="width: 50px;">Тип</td>
+									<td>Команда</td>
+									<td style="width: 90px;"></td>
+								</tr>
+							</thead>
+							<tbody></tbody>
+						</table>
+					</div>
+					<div class="popup-btns">
+												<button class="btn" onclick="setPageExportList();" style="float:right;">OK</button>
+					</div>
+				</div>
+				<div id="pageexport-profile">
+					<div style="float: left;">
+						<input type="hidden" name="pageexport-profile-ind" />
+						<label>Выберите профиль:</label>
+						<select name="exportname" style="width: 200px;">
+						</select>&nbsp;&nbsp;&nbsp;&nbsp;
+						<span class="label" id="labelcsv">csv</span>
+						<span class="label" id="labelxml">xml</span>
+						<span class="label" id="labelsql">sql</span>
+						<span class="label" id="labelexcel">Excel</span>
+						<span class="label" id="labelrdb">rdb</span>
+					</div>
+					<div id="divfilename" style="float: left; margin-left: 50px;">
+						<label>Имя создаваемого файла:</label>
+						<input type="text" name="filename" style="width: 150px;"/>
+					</div>
+					<div id="divretvarname" style="float: left; margin-left: 50px;">
+						<label>Результат в переменную:</label>
+						<input type="text" name="retvarname" style="width: 150px;"/>
+					</div>
+					<div style="clear: both;"></div>
+					<div id="savearray">
+						<div>
+							<button onclick="pageExportItemAdd();" class="btn btn-mini" style="float: right; margin-right: 5px;"><i class="icon-plus"></i>&nbsp;Добавить</button>
+							<label style="float: left;">Параметры (array):</label>
+						</div>
+						<div style="clear: both;"></div>
+						<div id="savearray-table">
+							<table class="table">
+							</table>
+						</div>
+					</div>
+					<div id="savedict">
+						<div>
+							<label style="float: left;">Параметры (dict):</label>
+						</div>
+						<div style="clear: both;"></div>
+						<div id="savedict-table">
+							<table class="table">
+							</table>
+						</div>
+					</div>
+					<br/>
+					<div class="popup-btns">
+						<button class="btn" onclick="cancelPageExport();" style="float:right; margin-left:10px;">Отмена</button>
+						<button class="btn" onclick="setPageExport();" style="float:right;">OK</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- EXPORT PARSE -->
+
+<!-- RULE OPTIONS PARSE -->
+<div id="ruleOptionsParseModal" class="modal fade"   tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<a class="close" data-dismiss="modal">×</a>
+				<h3>Параметры правила</h3>
+			</div>
+			<div class="modal-body">
+							<input type="hidden" name="rulename" value="" />
+					<div id="linkopt">
+												<label class="checkbox">
+							<input type="checkbox" name="optstorefile" />
+							Сохранять файл по ссылке						</label>
+						<div class="optline">
+							<label class="checkbox" style="float:left; margin-right: 20px;">
+								<input type="checkbox" name="optnext" />
+								Следующий элемент							</label>
+							<select name="optnexttype" style="width:150px;">
+								<option value="link">Ссылка</option>
+								<option value="text">Текст</option>
+								<option value="image">Картинка</option>
+							</select>
+						</div>
+						<label class="checkbox">
+							<input type="checkbox" name="optcontinue" />
+							Добавить в очередь загрузки						</label>
+					</div>
+					<div id="textopt">
+																		<label class="checkbox">
+							<input type="checkbox" name="optnodeonly" />
+							Только text node						</label>
+						<div style="margin-bottom: 5px;">
+							<label class="checkbox" style="float:left; margin-right: 20px;">
+								<input type="checkbox" name="optnext" />
+								Следующий элемент							</label>
+							<select name="optnexttype" style="width:150px;">
+								<option value="link">Ссылка</option>
+								<option value="text">Текст</option>
+								<option value="image">Картинка</option>
+								<option value="html">HTML</option>
+							</select>
+						</div>
+						<div style="margin-bottom: 5px;">
+							<label class="checkbox" style="float:left; margin-right: 20px;">
+								<input type="checkbox" name="optword" />
+								Выделить слово							</label>
+							<input type="text" name="optwordnumber" style="width:50px;" />
+							-
+							<input type="text" name="optwordnumber2" style="width:50px;" />
+						</div>
+						<div style="margin-bottom: 5px;">
+							<label class="checkbox" style="float:left; margin-right: 20px;">
+								<input type="checkbox" name="optimplode" />
+								Соединить строки в одну							</label>
+							<input type="text" name="optimplodestr" style="width:80px;" title="Разделитель"/>
+						</div>
+						<div style="margin-bottom: 5px;">
+							<label class="checkbox" style="float:left; margin-right: 20px;">
+								<input type="checkbox" name="optreplace" />
+								Заменить символы							</label>
+							<input type="text" name="optreplacesearch" style="width:80px;" title="Искать (regex)"/>
+							на							<input type="text" name="optreplacereplace" style="width:80px;" title="Замена"/>
+						</div>
+					</div>
+					<div id="imageopt">
+												<label class="checkbox">
+							<input type="checkbox" name="optstorefile" />
+							Сохранять файл изображения						</label>
+						<div style="margin-bottom: 5px;">
+							<label class="checkbox" style="float:left; margin-right: 20px;">
+								<input type="checkbox" name="optnext" />
+								Следующий элемент							</label>
+							<select name="optnexttype" style="width:150px;">
+								<option value="link">Ссылка</option>
+								<option value="text">Текст</option>
+								<option value="image">Картинка</option>
+								<option value="html">HTML</option>
+							</select>
+						</div>
+					</div>
+					<div id="formopt">
+					</div>
+					<div id="htmlopt">
+												<div style="margin-bottom: 5px;">
+							<label class="checkbox" style="float:left; margin-right: 20px;">
+								<input type="checkbox" name="optnext" />
+								Следующий элемент							</label>
+							<select name="optnexttype" style="width:150px;">
+								<option value="link">Ссылка</option>
+								<option value="text">Текст</option>
+								<option value="image">Картинка</option>
+								<option value="html">HTML</option>
+							</select>
+						</div>
+						<label class="checkbox">
+							<input type="checkbox" name="optcontent" />
+							Возвращать только содержимое (innerHTML)						</label>
+					</div>
+					<div class="popup-btns">
+						<button class="btn" onclick="cancelRuleOptions();" style="float:right; margin-left:10px;">Отмена</button>
+						<button class="btn" onclick="setRuleOptions();" style="float:right;">OK</button>
+					</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- RULE OPTIONS PARSE -->
+
+<!-- RULE SET GROUP PARSE -->
+<div id="ruleSetGroupParseModal" class="modal fade"   tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<a class="close" data-dismiss="modal">×</a>
+				<h3>Установка группы</h3>
+			</div>
+			<div class="modal-body">
+						
+					<div id="labels" style="margin-bottom: 10px;">
+						<span id="rulename"></span>&nbsp;&nbsp;&nbsp;&nbsp;
+						
+<span class="label" id="text">Текст</span>
+<span class="label" id="link">Ссылка</span>
+<span class="label" id="image">Картинка</span>
+<span class="label" id="regexp">RegExp</span>
+<span class="label" id="htmltype">HTML</span>
+					</div>
+					<label>
+						Выберите группу:						<select name="groups"></select>
+					</label>
+					<label>
+						Добавить в новую группу:<br/>
+						<input type="input" name="setname" />
+					</label>
+					<input type="hidden" name="name" />
+					<div class="popup-btns">
+						<button class="btn" onclick="cancelRuleSetGroup();" style="float:right; margin-left:10px;">Отмена</button>
+						<button class="btn" onclick="setRuleSetGroup();" style="float:right;">OK</button>
+					</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- RULE SET GROUP PARSE -->
+
+<!-- PAGE DATA PARSE -->
+<div id="pageDataParseModal" class="modal fade"   tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<a class="close" data-dismiss="modal">×</a>
+				<h3>Собранные данные</h3>
+			</div>
+			<div class="modal-body">
+							<div id="pagedata-data">
+					</div>
+					<div class="popup-btns">
+												<button class="btn" onclick="setPageData();" style="float:right;">OK</button>
+					</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- PAGE DATA PARSE -->
+
+<!-- RULE FILTER PARSE -->
+<div id="ruleFilterParseModal" class="modal fade"   tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<a class="close" data-dismiss="modal">×</a>
+				<h3>Фильтрация данных правила</h3>
+			</div>
+			<div class="modal-body">
+					<div id="labels" style="margin-bottom: 10px;">
+						<span id="rulename"></span>&nbsp;&nbsp;&nbsp;&nbsp;
+						<span class="label" id="text">Текст</span>
+						<span class="label" id="link">Ссылка</span>
+						<span class="label" id="image">Картинка</span>
+						<span class="label" id="regexp">RegExp</span>
+						<span class="label" id="htmltype">HTML</span>
+					</div>
+					<label style="float: left; margin-right: 40px;">
+						Тип: <select name="filtertype" style="width: 150px;">
+							<option value="equal">equal</option>
+							<option value="notequal">notequal</option>
+							<option value="regexp">regexp</option>
+							<option value="notregexp">notregexp</option>
+							<option value="condition">condition</option>
+						</select>
+					</label>
+					<label>
+						Значение:<br/>
+						<input type="text" name="filterstr" class="span4" style="float: left; margin-right: 20px;"/>
+						<button class="btn" onclick="setRuleFilter();">Применить</button>
+					</label>
+					<input type="hidden" name="name" />
+			</div>
+		</div>
+	</div>
+</div>
+<!-- RULE FILTER PARSE -->
+
+<!-- GET REGEXP PARSE -->
+<div id="getRegexpParseModal" class="modal fade"   tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<a class="close" data-dismiss="modal">×</a>
+				<h3>Правило RegExp</h3>
+			</div>
+			<div class="modal-body">
+					<div style="margin-bottom: 10px;">
+						<span>Имя правила:</span>
+						<input type="text" name="rulename" style="margin-right: 30px; width: 100px;"/>
+						<span>Шаблон RegExp:</span>
+						<input type="text" name="pattern" style="width: 300px; margin-right: 30px;"/>
+						<span>Возвращать result[</span>
+						<input type="text" name="resultind" style="width: 50px;" value="0"/>
+						<span>]</span>
+						<br/>
+					</div>
+					<div style="float:left; width: 70%; margin-right: 10px;">
+						<pre id="source" style="overflow: auto; height: 350px;"></pre>
+						<!-- <textarea id="source" class="ldt-input2" spellcheck="false"></textarea>  -->
+					</div>
+					<div>
+						<!-- <textarea name="reout" class="nonshadow" spellcheck="false" wrapp="off"></textarea> -->
+						<pre id="reout" style="overflow: auto; word-break: normal; word-wrap: normal; white-space: pre; height: 350px;"></pre>
+					</div>
+					<div class="popup-btns">
+						<button class="btn" onclick="cancelGetRegExp();" style="float:right; margin-left:10px;">Отмена</button>
+						<button class="btn" onclick="setGetRegExp();" style="float:right;">OK</button>
+					</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- GET REGEXP PARSE -->
+
+<!-- LOAD TREE PARSE -->
+<div id="loadTreeParseModal" class="modal fade"   tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<a class="close" data-dismiss="modal">×</a>
+				<h3>Загружаемые страницы</h3>
+			</div>
+			<div class="modal-body">
+							<div id="loadtree-content">
+						<ul>
+							<li><img class="plus" src="images/icon-opened.gif"/><span>page1</span><br/>
+								<ul>
+									<li><img class="plus" src="images/icon-opened.gif"/><span class="selected">page1_1</span></li>
+									<li><img class="plus" src="images/icon-opened.gif"/><span>page1_2</span></li>
+								</ul>
+							</li>
+							<li><img class="plus" src="images/icon-opened.gif"/><span>page2</span></li>
+						</ul>
+					</div>
+					<div class="popup-btns">
+						<button class="btn" onclick="cancelLoadTree();" style="float:right; margin-left:10px;">Отмена</button>
+						<button class="btn" onclick="setLoadTree();" style="float:right;">OK</button>
+					</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- LOAD TREE PARSE -->
+
+<!-- HTML TREE PARSE -->
+<div id="htmlTreeParseModal" class="js_htmltree modal fade"   tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<a class="close" data-dismiss="modal">×</a>
+				<h3>Дерево html элементов</h3>
+			</div>
+			<div class="modal-body">
+							<div id="htmltree-content">
+					</div>
+					<!-- <span>XPath</span><input type="text" name="xpath" style="width: 90%; margin-left: 10px;"/>  -->
+					<textarea name="xpath" spellcheck="false" style="width: 97%"></textarea>
+					<input type="hidden" name="name" />
+					<input type="hidden" name="xpath" />
+					<div class="popup-btns">
+						<button class="btn" onclick="cancelHtmlTree();" style="float:right; margin-left:10px;">Отмена</button>
+						<button class="btn js_set_xpath" id="" onclick="setHtmlTree(this);" style="float:right;">OK</button>
+						<div id="labels">
+							<span id="rulename"></span>&nbsp;&nbsp;&nbsp;&nbsp;
+							
+							<span class="label" id="text">Текст</span>
+							<span class="label" id="link">Ссылка</span>
+							<span class="label" id="image">Картинка</span>
+							<span class="label" id="regexp">RegExp</span>
+							<span class="label" id="htmltype">HTML</span>
+							
+						</div>
+					</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- HTML TREE PARSE -->
+
+
+<div id="loader" class="popup2">
+	<img src="images/ajax-loader2.gif" />
+</div>
+<script type="text/javascript" src="js/common.js" ></script>
+<script>
+
+$(document).ready(function() {
+
+	$(".datetimepicker" ).datetimepicker({ language: 'ru'});
+	
+	$(".modal-draggable .modal-dialog").draggable({
+		handle: ".modal-header"
+	});
+	
+	$('#js_base_btn').change(function() {
+		if($(this).is(":checked")) {
+			addBaseTag(getIframeContent('html'), $('input.js_url').val());
+			var html = populateIframe('html', getIframeContent('html').body.innerHTML);
+			setEvenHoveredAll(html);
+		}else{
+			delBaseTag(getIframeContent('html'));
+			var html = populateIframe('html', getIframeContent('html').body.innerHTML);
+			setEvenHoveredAll(html);
+		}
+	});
+	
+	$(".js_type").select2({
+		templateResult: formatState,
+		placeholder: "Select a type",
+		minimumResultsForSearch: Infinity
+	});
+});
+
+
+/**PARSE LIST**/
+
+var initParseList = function (){
+		//http://www.listjs.com/examples/add-get-remove
+		var ParseOptions = {
+			valueNames: ['id','name', 'url', 'date_edit' ],
+			item: '<li class="">'+
+							'<span class="id col_5" id="yw0_c1"><a><span class="caret"></span></a></span>'+
+							'<span class="name col_5" id="yw0_c1"><a><span class="caret"></span></a></span>'+
+							'<span class="url col_5" id="yw0_c2"><a><span class="caret"></span></a></span>'+
+							'<span class="date_edit col_5" id="yw0_c3"><a><span class="caret"></span></a></span>'+
+							'<span class="button-column col_5" id="yw0_c4">'+ 
+										'<button style="margin-left: 5px;" data-toggle="modal" data-target="#editParseModal" data-target=".bs-example-modal-lg" class="edit" rel="tooltip" data-original-title="Редактировать"><i class="icon-edit"></i></button>'+
+										'<button style="margin-left: 5px;" data-toggle="modal" data-target="#settingParseModal" rel="tooltip" data-original-title="Генерировать"><i class="icon-file"></i></button>'+
+										'<button style="margin-left: 5px;" data-toggle="modal" data-target="#runParseModal" rel="tooltip"  data-original-title="Управление запуском"><i class="icon-play"></i></button>'+
+										'<button style="margin-left: 5px;" data-toggle="modal" data-target="#resultParseModal" rel="tooltip"  data-original-title="Результат выполнения"><i class="icon-folder-open"></i></button>'+
+										'<button style="margin-left: 5px;" data-toggle="modal" data-target="#deleteParseModal" rel="tooltip" data-original-title="Create" rel="tooltip"  data-original-title="Удалить"><i class="icon-remove"></i></button>'+
+							'</span>'+
+					'</li>'
+		};
+		// Init list
+		return new List('parser_list', ParseOptions);
+}
+var parseList = initParseList();
+
+function getParserData(){
+	return [
+		{'id':'1', 'name':'habrahabr.ru','url':'http://habrahabr.ru/','date_edit':'22.05.2015'},
+		{'id':'2', 'name':'test','url':'http://test.te','date_edit':'22.05.2015'}
+	]
+}
+function addParseList(){
+	var parser = getParserData();
+	parseList.add(parser);
+}
+addParseList();
+
+$('#deleteParseModal, #runParseModal , #resultParseModal, #editParseModal').on('show.bs.modal', function (event) {
+	var button = $(event.relatedTarget);
+	var id = button.parent().parent().find('.id').text();
+	var name = button.parent().parent().find('.name').text();
+	var url = button.parent().parent().find('.url').text();
+	var modal = $(this);
+	modal.find('#js_scrid').val(id);
+	modal.find('span.js_url').text(url);
+	modal.find('input.js_url').val(url);
+	modal.find('.js_parse_id, .js_parse_name').text(name);
+});
+
+
+/**SAVE PARSER**/
+$('.js_site_save').on('click',function(e){
+	e.preventDefault();
+	var data = {
+		'id' : '3',
+		'name': $('#js-name-field').val(),
+		'url': $('#js-url-field').val(),
+		'date_edit' : new Date().yyyymmdd()
+	};
+	parseList.add(data);
+	
+});
+/**SAVE PARSER**/
+
+
+
+/**DELETE PARSER**/
+
+$('.js_site_del').on('click',function(e){
+	e.preventDefault();
+	var itemId = $('#js_scrid').val();
+	parseList.remove('id', itemId);
+});
+/**DELETE PARSER**/
+
+
+
+/**RUN PARSER**/
+$('.js_btnrun').on('click',function(e){
+	e.preventDefault();
+	$(this).hide();
+	$('.js_btnstop').show();
+	console.log('dont work');
+});
+$('.js_btnstop').on('click',function(e){
+	e.preventDefault();
+	$(this).hide();
+	$('.js_btnrun').show();
+	console.log('dont work');
+});
+/**RUN PARSER**/
+
+
+
+/**RESULT PARSE**/
+$('.js_res_save').on('click',function(e){
+	e.preventDefault();
+	console.log('dont work');
+});
+$('.js_res_del').on('click',function(e){
+	e.preventDefault();
+	console.log('dont work');
+});
+
+/**RESULT PARSE**/
+
+
+/**EDIT PARSE**/
+$('.js_loadpage_nourl').on('click',function(e){
+	e.preventDefault();
+	var url = document.querySelector('input.js_url').value;//_PARSE.url;
+	request(url);
+	return false;
+});
+
+
+$('.js_save_rule').on('click',function(e){
+	e.preventDefault();
+	rulessave();
+});
+
+
+$('#golink').on('click',function(e){
+	e.preventDefault();
+	_PARSE.golink = true;
+});
+
+$('.js_set_item').on('click',function(e){
+	e.preventDefault();
+	setItem();
+	return false;
+});
+/**EDIT PARSE**/
+
+/**PARSE LIST**/
+
+</script>
+  </body>
+</html>
