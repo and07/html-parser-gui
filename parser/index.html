@@ -42,7 +42,7 @@
 	<link  href="datepicker/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
 	<script src="datepicker/js/bootstrap-datetimepicker.min.js"></script>
 <script>
-
+/*
 //http://javascript.ru/forum/dom-window/21288-nuzhna-pomoshh-s-ochen-prostymi-veshhami-3.html
 jQuery.ajax = function (d) {
     var b = location.protocol,
@@ -68,7 +68,7 @@ jQuery.ajax = function (d) {
         return d.apply(this, arguments)
     }
 }(jQuery.ajax);
-
+*/
 function addScript(el,url,param){
 	param = param || "";
 	var script = el.createElement("script");
@@ -98,11 +98,13 @@ function request(url,callback) {
 			Loading.close();
 		};
 	}
+	/*
 	$.ajax({
 		url: url,
 		type: 'GET',
 		success: callback
 	});
+	*/
 	addScript(document,'https://peaceful-retreat-5894.herokuapp.com/get-content/habrahabr.ru','?jsonp_callback=jsonp_set_html');
 
 }	
