@@ -562,16 +562,18 @@ var ParseList = {
 		/*document.querySelector('.js_parse_edit').onclick = function(event){
 			initEven(event);
 		}*/
-		var action = ['edit','res','del'];
-		for(var k in action){
-			var elem = document.querySelectorAll('.js_parse_'+action[k]);
-			console.log(elem);
+		
+		var fn = function(action){
+			var elem = document.querySelectorAll('.js_parse_'+action);
 			for(var i in elem){
-				console.log(action[k]);
 				elem[i].onclick = function(event){
-					initEven(event, action[k]);
+					initEven(event, action);
 				}
 			}
+		};
+		var action = ['edit','res','del'];
+		for(var k in action){
+			fn(action[k]);
 		}
 	
     }
