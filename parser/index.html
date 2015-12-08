@@ -108,7 +108,7 @@ function request(url,callback) {
 	});
 	*/
 	url = encodeURIComponent(url);
-	addScript(document,'https://peaceful-retreat-5894.herokuapp.com/get-content/test','?url='+url+'&jsonp_callback=jsonp_set_html');
+	addScript(document,'https://peaceful-retreat-5894.herokuapp.com/get-content','?url='+url+'&jsonp_callback=jsonp_set_html');
 
 }	
 
@@ -203,14 +203,9 @@ function request(url,callback) {
 					<div class="" style="max-height:80%;">
 									
 <div class="tabbable tabs-right">
-		<ul id="sidetabs" class="nav nav-tabs">
-			<li class="active"><a id="tab-browser" data-toggle="tab" href="#tabBrowser">Браузер</a></li>
-			<li><a id="tab-rule"  data-toggle="tab" href="#tabRule" onclick="tabRuleClick();">Rule</a></li>
-			<li><a id="tab-html"  data-toggle="tab" href="#tabHTML" >HTML code</a></li>
-		</ul>
 		
-		<div class="tab-content">
-			<div id="tabBrowser" class="tab-pane active">
+		<div class="">
+			<div id="" class="tab-pane active">
 				<form class="form-inline">
 					<div class="form-group">
 							<input type="checkbox" name="base" id="js_base_btn">BaseTag
@@ -229,30 +224,20 @@ function request(url,callback) {
 						</div>
 					</div>
 				</div>
-				
+						
+				<div class="clear"></div>
 				<div id="iframes">
-					<div id="hovered-element" ><div id="hovered-element-info"></div></div>					
+								
 					<iframe id="html" name="html" width="99%" height="350" ></iframe>
+					<div id="hovered-element" style="position:relative;" ><div id="hovered-element-info" style="position:absolute;" ></div></div>			
 				</div>
-				
+				<div class="clear" style="height:40px;"></div>
 				<div id="rules-container">
 					<div id="" class="js_items" ></div>
 				</div>
-				
+				<div class="clear"></div>
 			</div>
-			
-			<div id="tabRule" class="tab-pane ">
-				<div id="script-container">			
-					<textarea id="script" class="ldt-input js_rule_res" wrap="off" spellcheck="false" style="margin: 0px; width: 1151px;  height: 431px;"></textarea>
-				</div>
-			</div>
-
-			<div id="tabHTML" class="tab-pane ">
-				<div style="height: 400px;">	
-					<textarea id="js_tpl" class="ldt-input" wrap="off" spellcheck="false"></textarea>
-				</div>
-			</div>			
-			
+		
 		</div>
 	</div>
 					</div>
@@ -266,6 +251,64 @@ function request(url,callback) {
 			
 </template>				
 <!-- EDIT PARSE -->
+
+<!-- EDIT RES -->
+<template id="js_parse_res" style="display:none">
+		<div id="script-container">			
+			<textarea id="script" class="ldt-input js_rule_res" wrap="off" spellcheck="false" style="margin: 0px; width: 1151px;  height: 431px;"></textarea>
+		</div>	
+</template>
+<!-- EDIT RES -->
+
+
+<!-- CREATE PARSE -->	
+<template id="js_parse_create" style="display:none">
+	<div class="">
+		<div class="">
+			<div class="">
+				<h3>Создать парсер <span class="js_parse_id"></span></h3>
+			</div>
+			<div class="">
+				<form class="form1 form-vertical" id="form"  method="post"> 
+				<div class="form-group">
+					<label for="js-name-field" class="required">Название <span class="required">*</span></label>
+					<input class="form-control" name="name-field" id="js-name-field" type="text" placeholder="name">
+				</div>
+				<div class="form-group">
+					<label for="js-url-field" class="required">Стартовая страница <span class="required">*</span></label>
+					<input class="form-control" name="url-field" id="js-url-field" type="text" placeholder="site.ru">
+				</div>
+				<br>
+				</form>
+			</div>
+			<div class="">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+					<button type="button" class="btn btn-primary js_site_save" data-dismiss="modal">Save changes</button>
+			</div>
+		</div>
+	</div>
+</template>
+<!-- CREATE PARSE-->
+
+<!-- DEL PARSE -->				
+<template id="js_parse_delete" style="display:none">
+	<div class="">
+		<div class="">
+				<div class="">
+					<h3>Удаление парсера <span class="js_parse_name"></span></h3>
+				</div>
+				<div class="">
+					<input type="hidden" name="scrid" id="js_scrid" value="">
+					<p>Вы действительно хотите удалить парсер?</p>
+				</div>
+				<div class="">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+					<button type="button" class="btn btn-primary js_site_del" data-dismiss="modal">Save changes</button>
+				</div>
+		</div>
+	</div>
+</template>
+<!-- DEL PARSE-->	
 
 <!-- MODAL -->
 	<!-- ITEM NAME PARSE -->
@@ -393,17 +436,6 @@ $(document).ready(function() {
 		handle: ".modal-header"
 	});
 	
-	$('#js_base_btn').change(function() {
-		if($(this).is(":checked")) {
-			addBaseTag(getIframeContent('html'), $('input.js_url').val());
-			var html = populateIframe('html', getIframeContent('html').body.innerHTML);
-			setEvenHoveredAll(html);
-		}else{
-			delBaseTag(getIframeContent('html'));
-			var html = populateIframe('html', getIframeContent('html').body.innerHTML);
-			setEvenHoveredAll(html);
-		}
-	});
 	
 	$(".js_type").select2({
 		templateResult: formatState,
@@ -411,33 +443,6 @@ $(document).ready(function() {
 		minimumResultsForSearch: Infinity
 	});
 });
-
-
-
-/**SAVE PARSER**/
-$('.js_site_save').on('click',function(e){
-	e.preventDefault();
-	var data = {
-		'id' : '3',
-		'name': $('#js-name-field').val(),
-		'url': $('#js-url-field').val(),
-		'date_edit' : new Date().yyyymmdd()
-	};
-	parseList.add(data);
-	
-});
-/**SAVE PARSER**/
-
-
-
-/**DELETE PARSER**/
-
-$('.js_site_del').on('click',function(e){
-	e.preventDefault();
-	var itemId = $('#js_scrid').val();
-	parseList.remove('id', itemId);
-});
-/**DELETE PARSER**/
 
 
 
@@ -490,20 +495,24 @@ function getParse(id){
 
 /**PARSE LIST**/
 var ParseList = {
+	list : null,
+	get : function(){
+		
+	},
+	
     controller: function() {
 		//alert('fgh');
     },
     view: function() {
-		var host = document.querySelector('#js_block');
-		var template = document.querySelector('#js_parse_list');
-		var clone = document.importNode(template.content, true);	
         return m("div", {config: ParseList.config}, m.trust(document.querySelector('#js_parse_list').innerHTML));
     },
     config: function(el, isInit, ctx) {
-		/*var host = document.querySelector('#js-block');
-		var template = document.querySelector('#js-list');
+		/*
+		var host = document.querySelector('#js_block');
+		var template = document.querySelector('#js_parse_list');
 		var clone = document.importNode(template.content, true);
-		document.querySelector('#js-block').appendChild(clone);	*/	
+		document.querySelector('#js-block').appendChild(clone);	
+		*/	
 		var initParseList = function (){
 				//http://www.listjs.com/examples/add-get-remove
 				var ParseOptions = {
@@ -514,11 +523,11 @@ var ParseList = {
 									'<span class="url col_5" id="yw0_c2"><a><span class="caret"></span></a></span>'+
 									'<span class="date_edit col_5" id="yw0_c3"><a><span class="caret"></span></a></span>'+
 									'<span class="button-column col_5" id="yw0_c4">'+ 
-												'<button style="margin-left: 5px;" data-toggle="modal" data-target="#editParseModal" data-target=".bs-example-modal-lg" class="js-parse-edit edit" rel="tooltip" data-original-title="Редактировать"><i class="icon-edit"></i></button>'+
-												'<button style="margin-left: 5px;" data-toggle="modal" data-target="#settingParseModal" rel="tooltip" data-original-title="Генерировать"><i class="icon-file"></i></button>'+
-												'<button style="margin-left: 5px;" data-toggle="modal" data-target="#runParseModal" rel="tooltip"  data-original-title="Управление запуском"><i class="icon-play"></i></button>'+
-												'<button style="margin-left: 5px;" data-toggle="modal" data-target="#resultParseModal" rel="tooltip"  data-original-title="Результат выполнения"><i class="icon-folder-open"></i></button>'+
-												'<button style="margin-left: 5px;" data-toggle="modal" data-target="#deleteParseModal" rel="tooltip" data-original-title="Create" rel="tooltip"  data-original-title="Удалить"><i class="icon-remove"></i></button>'+
+												'<button style="margin-left: 5px;" class="js_parse_edit edit" title="Редактировать"><i class="icon-edit"></i></button>'+
+												'<button style="margin-left: 5px;" class="js_parse_xx xx" title="Генерировать"><i class="icon-file"></i></button>'+
+												'<button style="margin-left: 5px;" class="js_parse_xx xx" title="Управление запуском"><i class="icon-play"></i></button>'+
+												'<button style="margin-left: 5px;" class="js_parse_res res" title="Результат выполнения"><i class="icon-folder-open"></i></button>'+
+												'<button style="margin-left: 5px;" class="js_parse_del del" title="Удалить"><i class="icon-remove"></i></button>'+
 									'</span>'+
 							'</li>'
 				};
@@ -529,17 +538,17 @@ var ParseList = {
 		
 		function addParseList(){
 			var parser = getParserData();
-			parseList.add(parser);
+			_parseList.add(parser);
 		}
 		
-		function initEven(event){
+		function initEven(event,attr){
 					var el = event.target || event.srcElement;
 					var button = $(el);
 					var id = button.parent().parent().parent().find('.id').text();
 					var name = button.parent().parent().parent().find('.name').text();
 					var url = button.parent().parent().parent().find('.url').text();
 					//alert(id);
-					m.route("/parse/edit/"+id);
+					m.route("/parse/"+attr+"/"+id);
 					var modal = $(this);
 					modal.find('#js_scrid').val(id);
 					modal.find('span.js_url').text(url);
@@ -547,22 +556,24 @@ var ParseList = {
 					modal.find('.js_parse_id, .js_parse_name').text(name);	
 		}
 		
-		var parseList = initParseList();
+		var _parseList = initParseList();
 		addParseList();
-		document.querySelector('.js-parse-edit').onclick = function(event){
+		ParseList.list = _parseList;
+		/*document.querySelector('.js_parse_edit').onclick = function(event){
 			initEven(event);
+		}*/
+		var action = ['edit','res','del'];
+		for(var k in action){
+			var elem = document.querySelectorAll('.js_parse_'+action[k]);
+			console.log(elem);
+			for(var i in elem){
+				console.log(action[k]);
+				elem[i].onclick = function(event){
+					initEven(event, action[k]);
+				}
+			}
 		}
-		$('#deleteParseModal, #runParseModal , #resultParseModal, #editParseModal').on('show.bs.modal', function (event) {
-			var button = $(event.relatedTarget);
-			var id = button.parent().parent().find('.id').text();
-			var name = button.parent().parent().find('.name').text();
-			var url = button.parent().parent().find('.url').text();
-			var modal = $(this);
-			modal.find('#js_scrid').val(id);
-			modal.find('span.js_url').text(url);
-			modal.find('input.js_url').val(url);
-			modal.find('.js_parse_id, .js_parse_name').text(name);
-		});		
+	
     }
 };
 
@@ -582,6 +593,17 @@ var ParseEdit = {
 		$('input.js_url').val(data.url);
 		$('.js_parse_id, .js_parse_name').text(data.name);		
 		/**EDIT PARSE**/
+		$('#js_base_btn').change(function() {
+			if($(this).is(":checked")) {
+				addBaseTag(getIframeContent('html'), $('input.js_url').val());
+				var html = populateIframe('html', getIframeContent('html').body.innerHTML);
+				setEvenHoveredAll(html);
+			}else{
+				delBaseTag(getIframeContent('html'));
+				var html = populateIframe('html', getIframeContent('html').body.innerHTML);
+				setEvenHoveredAll(html);
+			}
+		});
 		$('.js_loadpage_nourl').on('click',function(e){
 			e.preventDefault();
 			var url = document.querySelector('input.js_url').value;//_PARSE.url;
@@ -607,17 +629,72 @@ var ParseEdit = {
 		/**EDIT PARSE**/		
 	}
 };
+
+var ParseRes = {
+    controller: function() {},
+    view: function() {
+		return m("div", {config: ParseRes.config}, m.trust(document.querySelector('#js_parse_res').innerHTML));
+	},
+	config : function(el, isInit, ctx){
+		tabRuleClick();
+	}
+};
+
+var ParseCreate = {
+    controller: function() {},
+    view: function() {
+		return m("div", {config: ParseCreate.config}, m.trust(document.querySelector('#js_parse_create').innerHTML));
+	},
+	config : function(el, isInit, ctx){
+		/**SAVE PARSER**/
+		var parseList = ParseList.list;
+		$('.js_site_save').on('click',function(e){
+			e.preventDefault();
+			var data = {
+				'id' : '3',
+				'name': $('#js-name-field').val(),
+				'url': $('#js-url-field').val(),
+				'date_edit' : new Date().yyyymmdd()
+			};
+			parseList.add(data);
+			
+		});
+		/**SAVE PARSER**/		
+	}
+};
+
+var ParseDel = {
+    controller: function() {},
+    view: function() {
+		return m("div", {config: ParseDel.config}, m.trust(document.querySelector('#js_parse_delete').innerHTML));
+	},
+	config : function(el, isInit, ctx){
+
+		/**DELETE PARSER**/
+		
+		$('.js_site_del').on('click',function(e){
+			e.preventDefault();
+			var itemId = $('#js_scrid').val();
+			parseList.remove('id', itemId);
+		});
+		/**DELETE PARSER**/
+	}
+};
+
 var Dashboard = {
     controller: function() {},
     view: function() {}
 };
 
-//m.route.mode = "hash";
+m.route.mode = "hash";
 //m.route.mode = "search";
 //go to the default route (home)
 m.route(document.querySelector('#js_block'), "/", {
     "/": ParseList,
+	"/parse/create" : ParseCreate,
 	"/parse/edit/:id" : ParseEdit,
+	"/parse/res/:id" : ParseRes,
+	"/parse/del/:id" : ParseDel,
     "/dashboard": Dashboard,
 });
 
