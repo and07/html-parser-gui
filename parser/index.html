@@ -159,20 +159,26 @@ function request(url,callback) {
 	</div><!-- header -->
 </div>	
 <div class="clear"></div>
-
-<!-- PARSER LIST -->
-<div class="container-fluid">
-	<div class="span2">
-		<div class="right-panel hint">
-			Это список ваших парсеров.		
-		</div>	
-	</div>
-</div>
 	
-
 
 <!-- PARSER LIST -->
 <template id="js_parse_list" style="display:none">
+				<div class="">
+					<div class="right-panel">
+						<a href="#/parse/create"   class="btn btn-primary btn-lg" title="Create"><i class="icon-plus"></i>&nbsp;Создать парсер</a>
+					</div>
+				</div>
+				<div class="clear"></div>
+				<div class="">
+					<div class="span2">
+						<div class="right-panel hint">
+							Это список ваших парсеров.		
+						</div>	
+					</div>
+				</div>	
+				<div class="clear"></div>
+				<div class="title">Sites</div>
+				<br>
 				<div id="parser_list" class="grid-view">
 					<input type="text" class="search" placeholder="Search" />
 					<ul class="head_list">
@@ -243,7 +249,7 @@ function request(url,callback) {
 					</div>
 				<div class="">
 					<button class="btn js_save_rule"  >Сохранить</button>
-					<button id="btnclose" class="btn" >Закрыть</button>
+					<!--	<button id="btnclose" class="btn" >Закрыть</button>
 					<!--	<a data-dismiss="modal" id="add-btn" class="btn" href="/create/" >OK</a>    <a data-dismiss="modal" id="cancel-del-btn" class="btn" href="#">Отмена</a> -->
 				</div>
 		</div>
@@ -257,6 +263,7 @@ function request(url,callback) {
 		<div id="script-container">			
 			<textarea id="script" class="ldt-input js_rule_res" wrap="off" spellcheck="false" style="margin: 0px; width: 1151px;  height: 431px;"></textarea>
 		</div>	
+		<a href ="#/">ListParser</a><a href =""></a>
 </template>
 <!-- EDIT RES -->
 
@@ -282,7 +289,7 @@ function request(url,callback) {
 				</form>
 			</div>
 			<div class="">
-					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+					<!--	<button type="button" class="btn btn-default" data-dismiss="modal">Close</button> -->
 					<button type="button" class="btn btn-primary js_site_save" data-dismiss="modal">Save changes</button>
 			</div>
 		</div>
@@ -302,7 +309,7 @@ function request(url,callback) {
 					<p>Вы действительно хотите удалить парсер?</p>
 				</div>
 				<div class="">
-					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+					<!--	<button type="button" class="btn btn-default" data-dismiss="modal">Close</button> -->
 					<button type="button" class="btn btn-primary js_site_del" data-dismiss="modal">Save changes</button>
 				</div>
 		</div>
@@ -479,19 +486,31 @@ $('.js_res_del').on('click',function(e){
 
 
 
+_PARSE.sites.push({'id':'1', 'name':'habrahabr.ru','url':'http://habrahabr.ru/','date_edit':'22.05.2015'});
+_PARSE.sites.push({'id':'2', 'name':'test','url':'http://test.te','date_edit':'22.05.2015'});
 
-function getParserData(){
-	return [
-		{'id':'1', 'name':'habrahabr.ru','url':'http://habrahabr.ru/','date_edit':'22.05.2015'},
-		{'id':'2', 'name':'test','url':'http://test.te','date_edit':'22.05.2015'}
-	]
+
+function addSiteData(data){
+	_PARSE.sites.push(data);	
 }
-function getParse(id){
-	for(var i in getParserData()){
-		if(getParserData()[i]['id'] == id) return getParserData()[i];
+
+function removeSiteData(id){
+	var arr = [];
+	for(var i in _PARSE.sites){
+		if(_PARSE.sites[i]['id'] != id) arr.push(_PARSE.sites[i]);
+	}
+	_PARSE.sites = arr;
+}
+function getSiteData(){
+	return _PARSE.sites;
+};
+
+function getSite(id){
+	for(var i in getSiteData()){
+		if(getSiteData()[i]['id'] == id) return getSiteData()[i];
 	}
 	return false;
-}
+};
 
 /**PARSE LIST**/
 var ParseList = {
@@ -532,15 +551,18 @@ var ParseList = {
 							'</li>'
 				};
 				// Init list
-				return new List('parser_list', ParseOptions);
+				ParseList.list = new List('parser_list', ParseOptions);
+				return ParseList.list;
 		}
 		
 		
-		function addParseList(){
-			var parser = getParserData();
-			_parseList.add(parser);
+		function addSiteList(){
+			var parser = getSiteData();
+			ParseList.list.add(parser);
 		}
-		
+		initParseList();
+		addSiteList();	
+			
 		function initEven(event,attr){
 					var el = event.target || event.srcElement;
 					var button = $(el);
@@ -556,14 +578,13 @@ var ParseList = {
 					modal.find('.js_parse_id, .js_parse_name').text(name);	
 		}
 		
-		var _parseList = initParseList();
-		addParseList();
-		ParseList.list = _parseList;
+
+
 		/*document.querySelector('.js_parse_edit').onclick = function(event){
 			initEven(event);
 		}*/
 		
-		var fn = function(action){
+		var setAction = function(action){
 			var elem = document.querySelectorAll('.js_parse_'+action);
 			for(var i in elem){
 				elem[i].onclick = function(event){
@@ -573,7 +594,7 @@ var ParseList = {
 		};
 		var action = ['edit','res','del'];
 		for(var k in action){
-			fn(action[k]);
+			setAction(action[k]);
 		}
 	
     }
@@ -589,7 +610,7 @@ var ParseEdit = {
         return m("div", {config: ParseEdit.config}, m.trust(document.querySelector('#js_parse_edit').innerHTML));
 	},
 	config : function(el, isInit, ctx){
-		var data = getParse(m.route.param("id"));
+		var data = getSite(m.route.param("id"));
 		$('#js_scrid').val(data.id);
 		$('span.js_url').text(data.url);
 		$('input.js_url').val(data.url);
@@ -616,6 +637,8 @@ var ParseEdit = {
 		$('.js_save_rule').on('click',function(e){
 			e.preventDefault();
 			rulessave();
+			var id = m.route.param("id");
+			m.route("/parse/res/"+id);
 		});
 		
 		$('#golink').on('click',function(e){
@@ -649,7 +672,6 @@ var ParseCreate = {
 	},
 	config : function(el, isInit, ctx){
 		/**SAVE PARSER**/
-		var parseList = ParseList.list;
 		$('.js_site_save').on('click',function(e){
 			e.preventDefault();
 			var data = {
@@ -657,8 +679,9 @@ var ParseCreate = {
 				'name': $('#js-name-field').val(),
 				'url': $('#js-url-field').val(),
 				'date_edit' : new Date().yyyymmdd()
-			};
-			parseList.add(data);
+			};	
+			addSiteData(data);
+			m.route("/");
 			
 		});
 		/**SAVE PARSER**/		
@@ -676,8 +699,9 @@ var ParseDel = {
 		
 		$('.js_site_del').on('click',function(e){
 			e.preventDefault();
-			var itemId = $('#js_scrid').val();
-			parseList.remove('id', itemId);
+			//var itemId = $('#js_scrid').val();
+			removeSiteData(m.route.param("id"));
+			m.route("/");
 		});
 		/**DELETE PARSER**/
 	}
