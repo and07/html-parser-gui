@@ -330,7 +330,6 @@ function evaluateXPath(xpath, doc, context) {
 var _PARSE = (function () {
 	var self = this;
 	
-	
 	var cnt = 0;
 	var scnt = 0;
 	var tree = null;
@@ -464,7 +463,7 @@ var _PARSE = (function () {
 		
 	};
 	return {
-		sites : {},
+		sites : [],
 		_url : null,
 		_html : null,
 		_name : null,
@@ -501,8 +500,8 @@ function setItem()
 	
 	if (name != '' && name.search(/^[A-Za-z][A-Za-z0-9_]*$/) != -1) 
 	{
-		$('#itemNameParseModal').fadeOut('slow');
-
+		//$('#itemNameParseModal').fadeOut('slow');
+		$('#itemNameParseModal').modal('hide');
 		var scnt = _PARSE.addRule(parent);
 		var parent_id = 'tree_'+scnt;
 
@@ -522,9 +521,8 @@ function setItem()
 
 		fillSel('.js_parent', [{'text' : name , 'value' : parent_id}]);
 	}
-
-
 }
+
 function addEventListener(element, name, observer, capture) {
 
 	if (typeof element == 'string') {
@@ -596,7 +594,7 @@ function selectBorder(elem, type, e, dialog)
 	{
 		$('#itemNameParseModal').modal('show');
 		//$('#itemNameParseModal').css('left', e.clientX+50).css('top', e.clientY+10).fadeIn('slow');
-		$('#itemNameParseModal').css('top', e.clientY+10).fadeIn('slow');
+		//$('#itemNameParseModal').css('top', e.clientY+10).fadeIn('slow');
 	}
 	
 	$(elem).data('oldstyle2', $(elem).css('border'));
