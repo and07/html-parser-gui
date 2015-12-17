@@ -89,7 +89,7 @@ var jsonp_set_html = function(data) {
 	Loading.close();
 };
 	
-function request(url,callback) {
+function request(url, callback) {
 	Loading.show();
 	callback = callback||null;
 	if(callback === null){
@@ -109,8 +109,12 @@ function request(url,callback) {
 	});
 	*/
 	url = encodeURIComponent(url);
-	addScript(document,'https://peaceful-retreat-5894.herokuapp.com/get-content','?url='+url+'&jsonp_callback=jsonp_set_html');
-
+	var type_request = document.querySelector('input[name="request"]:checked').value;
+	if(type_request == 'curl'){
+		addScript(document,'https://peaceful-retreat-5894.herokuapp.com/get-content','?url='+url+'&jsonp_callback=jsonp_set_html');
+	}else{
+		addScript(document,'https://voyage-madame-4519.herokuapp.com/api/getHtml','?url='+url+'&callback=jsonp_set_html');
+	}
 }	
 
 </script>
@@ -213,6 +217,10 @@ function request(url,callback) {
 		
 		<div class="">
 			<div id="" class="tab-pane active">
+<div>
+	<input type="radio" name="request" value="curl" checked="checked"> Curl<Br>
+	<input type="radio" name="request" value="phantomjs"> phantomjs
+</div>
 				<form class="form-inline">
 					<div class="form-group">
 							<input type="checkbox" name="base" id="js_base_btn">BaseTag
@@ -229,7 +237,8 @@ function request(url,callback) {
 							<!-- <button id="golink" class="btn"><i class="icon-share-alt"></i>&nbsp;Загрузить ссылку</button>	 -->
 							
 						</div>
-						<div><input type="checkbox" name="golink" id="js_golink" ><i class="icon-share-alt"></i>&nbsp;Загрузить ссылку</div>		
+						<div><input type="checkbox" name="golink" id="js_golink" ><i class="icon-share-alt"></i>&nbsp;Загрузить ссылку</div>	
+	
 					</div>
 				</div>
 				
@@ -489,7 +498,7 @@ $('.js_res_del').on('click',function(e){
 
 
 _PARSE.sites.push({'id':'1', 'name':'habrahabr.ru','url':'http://habrahabr.ru/','date_edit':'22.05.2015'});
-_PARSE.sites.push({'id':'2', 'name':'test','url':'http://test.te','date_edit':'22.05.2015'});
+_PARSE.sites.push({'id':'2', 'name':'mirtesen','url':'http://mirtesen.ru/#','date_edit':'22.05.2015'});
 
 
 function addSiteData(data){
