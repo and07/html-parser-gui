@@ -113,7 +113,7 @@ function request(url, callback) {
 	if(type_request == 'curl'){
 		addScript(document,'https://peaceful-retreat-5894.herokuapp.com/get-content','?url='+url+'&jsonp_callback=jsonp_set_html');
 	}else{
-		addScript(document,'https://voyage-madame-4519.herokuapp.com/api/getHtml','?url='+url+'&callback=jsonp_set_html');
+		addScript(document,'https://voyage-madame-4519.herokuapp.com/api/getHtml','?url='+url+'&callback=jsonp_set_html&time=5000');
 	}
 }	
 
