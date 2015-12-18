@@ -566,6 +566,7 @@ function setEvenHoveredAll(html){
 						
 						if(_PARSE && _PARSE.golink){
 							var url = $(_target).attr('href');
+							if(!url) url = $(_target).parent().attr('href');
 							request(url);
 						}else{
 							_PARSE.rule_xpath = createXPathFromElement(_target);
