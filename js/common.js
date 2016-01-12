@@ -471,6 +471,7 @@ var _PARSE = (function () {
 		_rule_name : null,
 		_rule_type : null,
 		_rule_xpath : null,
+        pages: [],
 		doc : null,
 		rule : [],
 		seltype : [

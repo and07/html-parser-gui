@@ -71,6 +71,21 @@ jQuery.ajax = function (d) {
     }
 }(jQuery.ajax);
 */
+var getElementByXpathAll = function(xpathToExecute){
+  var result = [];
+  var nodesSnapshot = document.evaluate(xpathToExecute, document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null );
+  for ( var i=0 ; i < nodesSnapshot.snapshotLength; i++ ){
+    result.push( nodesSnapshot.snapshotItem(i) );
+  }
+  return result;
+}
+
+
+function getElementByXpath (path) {
+return document.evaluate(path, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+}
+
+//console.log( getElementByXpath("//html[1]/body[1]/div[1]").innerHTML );
 
 function addScript(el,url,param){
 	param = param || "";
@@ -83,6 +98,9 @@ function addScript(el,url,param){
 var jsonp_set_html = function(data) {
 	_PARSE.golink = false;
 	var html = populateIframe('html', data.res);
+    var obj = {};
+    obj[data.url] = data.res;
+    _PARSE.pages.push(obj)
 	setEvenHoveredAll(html);
 	//removeClass(document.querySelector('#js_golink'),'active');
 	document.querySelector('#js_golink').checked = false;
@@ -148,7 +166,7 @@ function request(url, callback) {
 </style>
   </head>
   <body>
-
+<div class="container">
 <div id="main">
 	<div id="header">
 	<div class="container-fluid">
@@ -274,7 +292,7 @@ function request(url, callback) {
 		<div id="script-container">			
 			<textarea id="script" class="ldt-input js_rule_res" wrap="off" spellcheck="false" style="margin: 0px; width: 1151px;  height: 431px;"></textarea>
 		</div>	
-		<a href ="#/">ListParser</a><a href =""></a>
+		<a href ="#/">ListParser</a><a href ="#/parse/run">run parse data</a>
 </template>
 <!-- EDIT RES -->
 
@@ -350,7 +368,6 @@ function request(url, callback) {
 								<option value="text">Текст</option>
 								<option value="html">HTML</option>
 								<option value="img">Картинка</option>
-								<option value="table">table</option>
 							</select>
 						</div>
 						<div class="form-group">
@@ -438,7 +455,7 @@ function request(url, callback) {
 				<div id="js_block"></div>
 		</div>
 	<div class="clear"></div>
-
+</div>
 	<div id="loader" class="popup2">
 		<img src="images/ajax-loader2.gif" />
 	</div>
@@ -718,6 +735,13 @@ var ParseDel = {
 	}
 };
 
+var ParseRun = {
+    controller: function() {},
+    view: function() {}
+
+};
+
+
 var Dashboard = {
     controller: function() {},
     view: function() {}
@@ -732,6 +756,7 @@ m.route(document.querySelector('#js_block'), "/", {
 	"/parse/edit/:id" : ParseEdit,
 	"/parse/res/:id" : ParseRes,
 	"/parse/del/:id" : ParseDel,
+	"/parse/run/:id" : ParseRun,
     "/dashboard": Dashboard,
 });
 
