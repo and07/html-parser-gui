@@ -138,3 +138,29 @@ pointer-events: all;
 /*max-width: 450px;*/
 border-radius: 3px;
 }
+
+
+#htmltree-content {
+	margin-bottom: 10px;
+	border: 1px solid #DDDDDD;
+	overflow: auto;
+	height: 69%;
+	width: 98%;
+}
+
+#htmltree-content ul {
+	list-style: none;
+}
+
+#htmltree-content .plus {
+	margin-right: 5px;
+}
+
+#htmltree-content li {
+	cursor: pointer;
+}
+
+#htmltree-content .selected {
+	background: black;
+	color: white;
+}

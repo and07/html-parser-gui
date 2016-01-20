@@ -1,4 +1,63 @@
 "use strict";
+
+var getElementByXpathAll = function(xpathToExecute){
+  var result = [];
+  var nodesSnapshot = document.evaluate(xpathToExecute, document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null );
+  for ( var i=0 ; i < nodesSnapshot.snapshotLength; i++ ){
+    result.push( nodesSnapshot.snapshotItem(i) );
+  }
+  return result;
+};
+
+
+function getElementByXpath (path) {
+    return document.evaluate(path, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+};
+
+//console.log( getElementByXpath("//html[1]/body[1]/div[1]").innerHTML );
+
+function addScript(el,url,param){
+	param = param || "";
+	var script = el.createElement("script");
+	script.src = url+'/'+param;
+	script.async = true;
+	el.getElementsByTagName("head")[0].appendChild(script);
+};
+
+var jsonp_set_html = function(data) {
+	_PARSE.golink = false;
+	var html = populateIframe('html', data.res);
+    var obj = {};
+    obj[data.url] = data.res;
+    _PARSE.pages.push(obj)
+	setEvenHoveredAll(html);
+	//removeClass(document.querySelector('#js_golink'),'active');
+	document.querySelector('#js_golink').checked = false;
+	Loading.close();
+};
+	
+function request(url, callback) {
+	Loading.show();
+	callback = callback||null;
+	if(callback === null){
+		callback = function(res) {
+			_PARSE.golink = false;
+			var html = populateIframe('html', res.responseText);
+			setEvenHoveredAll(html);
+			document.querySelector('#js_golink').checked = false;
+			Loading.close();
+		};
+	}
+	url = encodeURIComponent(url);
+	var type_request = document.querySelector('input[name="request"]:checked').value;
+	if(type_request == 'curl'){
+		addScript(document,'https://peaceful-retreat-5894.herokuapp.com/get-content','?url='+url+'&jsonp_callback=jsonp_set_html');
+	}else{
+		addScript(document,'https://voyage-madame-4519.herokuapp.com/api/getHtml','?url='+url+'&callback=jsonp_set_html&time=5000');
+	}
+};
+
+
 Date.prototype.yyyymmdd = function() {
    var yyyy = this.getFullYear().toString();
    var mm = (this.getMonth()+1).toString(); // getMonth() is zero-based
@@ -187,16 +246,17 @@ function parseURL(url) {
 }
 var getTreeData =  function(el){
 	var getData = function(el){
-		var _xpath = {};
-		var _name = {};
-		var _attr = {};
 		var tmp = {};
 		var xpath = el.querySelector('.xpath');
 		var name = el.querySelector('.name');
-		var attr = el.querySelector('.selattr');
-		tmp[xpath.getAttribute("name")] = xpath.value;
+		var attr = el.querySelector('.attr');
+		var selattr = el.querySelector('.selattr');
+		var all = document.querySelector('#js_all').checked;
+		
+		tmp[xpath.getAttribute("name")] = all ? xpath.value.replace(/\[1\]/g, '') : xpath.value;
 		tmp[name.getAttribute("name")] = name.value;
 		tmp[attr.getAttribute("name")] = attr.value;
+		tmp[selattr.getAttribute("name")] = selattr.value;
 		return tmp;
 	}
 	
@@ -236,8 +296,9 @@ function getRule(){
     var host = parseURL(url);
     var domen = host.protocol + '://' + host.host;
     var type = _PARSE.type;
-    
-	return {'url':url, 'rule':data,'host':host['host'], 'name':name, 'domen':domen}
+	var all = document.querySelector('#js_all').checked;
+    var limit = document.querySelector('#js_limit').value || 1;
+	return {'url':url, 'all':all, 'rule':data,'host':host['host'], 'name':name, 'domen':domen, 'limit':limit}
 
 }
 function rulessave(successfunc)
@@ -341,6 +402,7 @@ var _PARSE = (function () {
 		var _xpath = 'xpath';
 		var _name = 'name';
 		var _type = 'type';
+		var _attr = 'attr';
 		return v(id, {}, [ 
 				v('div.row', {}, [
 					v( 'div.col-xs-2',{},[
@@ -352,6 +414,9 @@ var _PARSE = (function () {
 					v( 'div.col-xs-4',{},[				
 						v('input.form-control.xpath',{type:'text',placeholder:'Xpath',name:_xpath,'disabled':"disabled"}),
 					]),
+					v( 'div.col-xs-4',{},[				
+						v('input.form-control.attr',{type:'hidden',placeholder:'Attr',name:_attr,'disabled':"disabled"}),
+					]),					
 					v( 'div.col-xs-1',{},[		
 						v("button.btn.btn-default#edit_item", { onclick: editItem, 'data-id':id}, "EditItem"),
 					]),
@@ -496,6 +561,7 @@ function setItem()
 {
 	var type = $('#itemNameParseModal select[name="type"]').val();
 	var name = $('#itemNameParseModal input[name="name"]').val();
+	var attr =  $('#itemNameParseModal .js_attr').val() || null;
 	var parent = $('#itemNameParseModal .js_parent').val() || null;
 	
 	
@@ -519,7 +585,8 @@ function setItem()
 		
 		el.querySelector('.type').value = type;
 		el.querySelector('.name').value = name;
-
+		el.querySelector('.attr').value = attr;
+		
 		fillSel('.js_parent', [{'text' : name , 'value' : parent_id}]);
 	}
 }
@@ -572,6 +639,13 @@ function setEvenHoveredAll(html){
 						}else{
 							_PARSE.rule_xpath = createXPathFromElement(_target);
 							selectBorder(_target, 'text', e, true);
+							//limit
+							//document.querySelector('#js_limit').value = document.evaluate(_PARSE.rule_xpath, document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null).snapshotLength
+							//attr
+							$('.js_attr').html('<option value=""></option>');
+							for (var i = 0, atts = _target.attributes, n = atts.length, arr = []; i < n; i++){
+								fillSel('.js_attr', [{ 'text' : atts[i].nodeName , 'value' : atts[i].nodeName }]);
+							}	
 						}
 						
 						 e.preventDefault();
@@ -597,7 +671,7 @@ function selectBorder(elem, type, e, dialog)
 		$('#itemNameParseModal').modal('show');
 		//$('#itemNameParseModal').css('left', e.clientX+50).css('top', e.clientY+10).fadeIn('slow');
 		//$('#itemNameParseModal').css('top', e.clientY+10).fadeIn('slow');
-	}
+	}	
 	
 	$(elem).data('oldstyle2', $(elem).css('border'));
 	$(elem).data('selected', 1);
@@ -776,7 +850,7 @@ var formatState = function(state) {
 			'link' : '<i class="icon-font"></i>',
 			'img' : '<i class="icon-picture"></i>',
 			'html' : '<i class="icon-chevron-left"></i><i class="icon-chevron-right"></i>',
-			'table' : '',
+			'attr' : '',
 		};
 		if (!state.id) { return state.text; }
 		var $state = $(
