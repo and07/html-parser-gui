@@ -1,4 +1,4 @@
-﻿"use strict";
+"use strict";
 
 $(document).ready(function() {
 	
@@ -140,15 +140,10 @@ var ParseList = {
 					modal.find('.js_parse_id, .js_parse_name').text(name);	
 		}
 		
-
-
-		/*document.querySelector('.js_parse_edit').onclick = function(event){
-			initEven(event);
-		}*/
-		
 		var setAction = function(action){
 			var elem = document.querySelectorAll('.js_parse_'+action);
 			for(var i in elem){
+				if ( i=='length' || i=='item') continue;
 				elem[i].onclick = function(event){
 					initEven(event, action);
 				}
