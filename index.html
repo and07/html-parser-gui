@@ -39,65 +39,18 @@
 <div id="main">
 	<div id="header">
 	<div class="container-fluid">
-		<div id="userinfo">
-			<!--prio@hotbox.ru&nbsp;&nbsp;|&nbsp;&nbsp;<a target="_blank" href="#/ru/docs">Документация</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="#/ru/site/logout">Выход</a>	-->	
-		</div>
 		<div id="logo">
-			<a href="/">
-				<h1>Parser</h1>
-			</a>
 		</div>
 	</div>	
 	</div><!-- header -->
 </div>	
 <div class="clear"></div>
-	
-
-<!-- PARSER LIST -->
-<template id="js_parse_list" style="display:none">
-				<div class="">
-					<div class="right-panel">
-						<a href="#/parse/create"   class="btn btn-primary btn-lg" title="Create"><i class="icon-plus"></i>&nbsp;Создать парсер</a>
-					</div>
-				</div>
-				<div class="clear"></div>
-				<div class="">
-					<div class="span2">
-						<div class="right-panel hint">
-							Это список ваших парсеров.		
-						</div>	
-					</div>
-				</div>	
-				<div class="clear"></div>
-				<div class="title">Sites</div>
-				<br>
-				<div id="parser_list" class="grid-view">
-					<input type="text" class="search" placeholder="Search" />
-					<ul class="head_list">
-							<li class="">
-								<span class="sort col_5" data-sort="name" id="yw0_c1"><a >id<span class="caret"></span></a></span>
-								<span class="sort col_5" data-sort="name" id="yw0_c1"><a >Название сайта<span class="caret"></span></a></span>
-								<span class="sort col_5" data-sort="url"  id="yw0_c2"><a >URL сайта<span class="caret"></span></a></span>
-								<span class="sort col_5" data-sort="date_edit" id="yw0_c3"><a>Изменено<span class="caret"></span></a></span>
-								<span class="button-column col_5" id="yw0_c4"> </span>
-							</li>
-					</ul>
-					<ul class="list"></ul>
-				</div>
-<script>
-  
-</script>					
-</template>
-<!-- PARSER LIST -->
 
 
 <!-- EDIT PARSE -->
 <template id="js_parse_edit" style="display:none">
 	<div class="">
 		<div class="">
-					<div class="">
-						<h3>Edit <span class="js_parse_name"></span></h3>
-					</div>
 					<div class="" style="max-height:80%;">
 									
 <div class="tabbable tabs-right">
@@ -167,59 +120,9 @@
 		<div id="script-container">			
 			<textarea id="script" class="ldt-input js_rule_res" wrap="off" spellcheck="false" style="margin: 0px; width: 1151px;  height: 431px;"></textarea>
 		</div>	
-		<a href ="#/">ListParser</a><a href ="#/parse/run">run parse data</a>
+		<a href ="#/">ListParser</a>
 </template>
 <!-- EDIT RES -->
-
-
-<!-- CREATE PARSE -->	
-<template id="js_parse_create" style="display:none">
-	<div class="">
-		<div class="">
-			<div class="">
-				<h3>Создать парсер <span class="js_parse_id"></span></h3>
-			</div>
-			<div class="">
-				<form class="form1 form-vertical" id="form"  method="post"> 
-				<div class="form-group">
-					<label for="js-name-field" class="required">Название <span class="required">*</span></label>
-					<input class="form-control" name="name-field" id="js-name-field" type="text" placeholder="name">
-				</div>
-				<div class="form-group">
-					<label for="js-url-field" class="required">Стартовая страница <span class="required">*</span></label>
-					<input class="form-control" name="url-field" id="js-url-field" type="text" placeholder="site.ru">
-				</div>
-				<br>
-				</form>
-			</div>
-			<div class="">
-					<!--	<button type="button" class="btn btn-default" data-dismiss="modal">Close</button> -->
-					<button type="button" class="btn btn-primary js_site_save" data-dismiss="modal">Save changes</button>
-			</div>
-		</div>
-	</div>
-</template>
-<!-- CREATE PARSE-->
-
-<!-- DEL PARSE -->				
-<template id="js_parse_delete" style="display:none">
-	<div class="">
-		<div class="">
-				<div class="">
-					<h3>Удаление парсера <span class="js_parse_name"></span></h3>
-				</div>
-				<div class="">
-					<input type="hidden" name="scrid" id="js_scrid" value="">
-					<p>Вы действительно хотите удалить парсер?</p>
-				</div>
-				<div class="">
-					<!--	<button type="button" class="btn btn-default" data-dismiss="modal">Close</button> -->
-					<button type="button" class="btn btn-primary js_site_del" data-dismiss="modal">Save changes</button>
-				</div>
-		</div>
-	</div>
-</template>
-<!-- DEL PARSE-->	
 
 <!-- MODAL -->
 	<!-- ITEM NAME PARSE -->
