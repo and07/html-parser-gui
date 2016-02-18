@@ -695,6 +695,62 @@ function removeClass(ele,cls) {
 	}
 }
 
+function extend(target) {
+    var sources = [].slice.call(arguments, 1);
+    sources.forEach(function (source) {
+        for (var prop in source) {
+            target[prop] = source[prop];
+        }
+    });
+    return target;
+}
+
+
+/**
+ * layer
+ */
+var Layer = (function(){
+    
+    var config_def  = {
+        'css': {
+            'top' :  $('#header').height()-5,
+            'opacity' : 0.8,
+            'background' : '#000',
+        },
+        'content' : null
+    };
+ 
+    
+	function showLayer(config)
+	{
+        config = extend({}, config_def, config);
+        var $layer = $('<div id="layer"></div>');
+        for(var key in config.css){
+            $layer.css(key, config.css[key]);
+        }
+        if(config.content){
+            $layer.html(config.content);
+        }
+        $layer.width($(window).width());
+        $layer.height($(document).height());
+        $layer.height($(document).height());
+        $layer.appendTo('nav');
+
+	};
+
+	function hideLayer()
+	{
+		$('#layer').remove();
+	};
+	
+	
+	return {
+		show : showLayer,
+		hide : hideLayer
+	}
+})();
+
+
 /*******Loading*******/
 var Loading = (function(){
 	var LoadingProcessCount = 0;
@@ -706,6 +762,8 @@ var Loading = (function(){
 			$layer.css('top', $('#header').height()-5);
 			$layer.width($(window).width());
 			$layer.height($(document).height());
+            $layer.css('opacity', 0.5);
+            $layer.css('background', '#000');
 			$layer.appendTo('body');
 		
 			$('#loader').show();

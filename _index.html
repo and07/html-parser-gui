@@ -1,121 +1,129 @@
 <!DOCTYPE html>
-<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<html lang="en">
+  <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-    <meta name="description" content="">
-    <meta name="author" content="">
-    <link rel="icon" href="https://getbootstrap.com/favicon.ico">
+    <title>xpath rule for parser</title>
 
-    <title>Fixed Top Navbar Example for Bootstrap</title>
-
-    <!-- Bootstrap core CSS -->
-    <link href="css/bootstrap.min.css" rel="stylesheet">
-
-    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-    <link href="css/ie10-viewport-bug-workaround.css" rel="stylesheet">
-
-    <!-- Custom styles for this template -->
-    <link href="css/navbar-fixed-top.css" rel="stylesheet">
-    
+    <!-- Bootstrap -->
+    <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <link href="css/icon.css" rel="stylesheet">
     <link href="css/style.css" rel="stylesheet">
+	
+	<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+	
+	<!-- http://jsfiddle.net/jcosnn6u/3/ -->
+	<link rel="stylesheet" href="http://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+	<script src="http://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="bootstrap/js/bootstrap.min.js"></script>
+	
+	<!-- https://select2.github.io/ -->
+	<link href="js/select2/dist/css/select2.min.css" rel="stylesheet" />
+	<script src="js/select2/dist/js/select2.min.js"></script>
 
-    <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
-    <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
-    <script src="js/ie-emulation-modes-warning.js"></script>
+	<!-- http://www.listjs.com/ -->
+	<script type="text/javascript" src="js/list.js"></script>
 
-    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-    <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-    <![endif]-->
+	<!-- https://github.com/finom/vanillatree -->
+	<link href="js/vanillatree/vanillatree.css" rel="stylesheet" />
+	<script src="js/vanillatree/vanillatree.js"></script>
+    
+	<script src="js/mithril.js"></script>
   </head>
-
   <body>
+<div class="container">
+<div id="main">
+	<div id="header">
+	<div class="container-fluid">
+		<div id="logo">
+		</div>
+	</div>	
+	</div><!-- header -->
+</div>	
+<div class="clear"></div>
 
-    <!-- Fixed navbar -->
-    <nav class="navbar navbar-default navbar-fixed-top">
-      <div class="container">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" href="/">Project</a>
-        </div>
-        <div id="navbar" class="navbar-collapse collapse">
-          <ul class="nav navbar-nav">
-            <li>	
+
+<!-- EDIT PARSE -->
+<template id="js_parse_edit" style="display:none">
+	<div class="">
+		<div class="">
+					<div class="" style="max-height:80%;">
+									
+<div class="tabbable tabs-right">
+		
+		<div class="">
+			<div id="" class="tab-pane active">
+				<div>
+					<input type="radio" name="request" value="curl" checked="checked"> Curl<Br>
+					<input type="radio" name="request" value="phantomjs"> phantomjs
+				</div>
+				<form class="form-inline">
+					<div class="checkbox">
+							<input type="checkbox" name="base" id="js_base_btn">BaseTag
+					</div>
+					<div class="checkbox">
+							<input type="checkbox" name="allelem" id="js_all" >&nbsp;All element
+					</div>					
+					<div class="form-group">
+						<label class="sr-only" for="js_limit" >Limit parsing</label>
+						<input type="text" name="limit" id="js_limit" placeholder="Limit parsing" value="1" >
+					</div>
+				</form>
+				
 				<form class="form-inline">
 					<div class="form-group">
 						<label class="sr-only" for="js_url" >Url page</label>
 						<input type="text" name="url" class="js_url" value="" placeholder="Url page" style="width: 300px;"/>
 					</div>
 					<button class="btn js_loadpage_nourl" title="refrash"><i class="icon-repeat"></i></button>
-				</form>
-            </li>
-            <li>
-				<div>
-					<input type="radio" name="request" value="curl" checked="checked"> Curl<Br>
-					<input type="radio" name="request" value="phantomjs"> phantomjs
-				</div>
-            </li>
-            <li class="dropdown">
-              <a href="/#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Settings <span class="caret"></span></a>
-              <ul class="dropdown-menu" style="padding:0 0 0 30px;">
-                <li>
-                    <div class="checkbox">
+					<div class="checkbox">
 						<input type="checkbox" name="golink" id="js_golink" ><i class="icon-share-alt"></i>&nbsp;simulate click	
 					</div>
-                </li>
-                <li>
-                    <div class="checkbox">
-							<input type="checkbox" name="base" id="js_base_btn">BaseTag
-					</div>
-                </li>
-                <li>
-					<div class="checkbox">
-							<input type="checkbox" name="allelem" id="js_all" >&nbsp;All element
-					</div>	
-                </li>
-                <li role="separator" class="divider"></li>
-                <li class="dropdown-header">Nav header</li>
-                <li><input type="text" name="limit" id="js_limit" placeholder="Limit parsing" value="1" ></li>
-              </ul>
-            </li>
-          </ul>
-          <ul class="nav navbar-nav navbar-right">
-            <li><div class="js_extractor extractor btn_view " style=""></div></li>
-            <li><div class="model btn_view " style=""></div></li>
-            <li><div class="res btn_view " style=""></div></li>
-            <li><button class="btn js_save_rule"  >Done</button></a></li>
-          </ul>
-        </div><!--/.nav-collapse -->
-      </div>
-    </nav>
+				</form>
 
-    <div class="">
-        <div id="hovered-element" style="position:relative;" ><div id="hovered-element-info" style="position:absolute;" ></div></div>			
-        <!-- Main component for a primary marketing message or call to action -->
-        <div id="iframes">			
-            <iframe id="html" name="html" style="position: absolute; height: 100%; width:100%; border: none; top:140px;" ></iframe>
-        </div>
-    </div> <!-- /container -->
-    
-    
-    
-<!-- RESULT -->
+				<div class="clear"></div>
+				
+				<div id="iframes">			
+					<iframe id="html" name="html" width="99%" height="350" ></iframe>
+					<div id="hovered-element" style="position:relative;" ><div id="hovered-element-info" style="position:absolute;" ></div></div>			
+				</div>
+				
+				<div class="clear" style="height:40px;"></div>
+				
+				<div id="rules-container">
+					<div id="" class="js_items" ></div>
+				</div>
+				
+				<div class="clear"></div>
+			</div>
+		
+		</div>
+	</div>
+					</div>
+				<div class="">
+					<button class="btn js_save_rule"  >Сохранить</button>
+					<!--	<button id="btnclose" class="btn" >Закрыть</button>
+					<!--	<a data-dismiss="modal" id="add-btn" class="btn" href="/create/" >OK</a>    <a data-dismiss="modal" id="cancel-del-btn" class="btn" href="#">Отмена</a> -->
+				</div>
+		</div>
+	</div>
+			
+</template>				
+<!-- EDIT PARSE -->
+
+<!-- EDIT RES -->
 <template id="js_parse_res" style="display:none">
-		<div id="script-container" class="container">			
+		<div id="script-container">			
 			<textarea id="script" class="ldt-input js_rule_res" wrap="off" spellcheck="false" style="margin: 0px; width: 1151px;  height: 431px;"></textarea>
 		</div>	
+		<a href ="#/">ListParser</a>
 </template>
-<!-- RESULT --> 
-    
+<!-- EDIT RES -->
+
 <!-- MODAL -->
 	<!-- ITEM NAME PARSE -->
 	<div id="itemNameParseModal" class="modal fade modal-draggable"   tabindex="-1" role="dialog" aria-hidden="true">
@@ -224,31 +232,20 @@
 	</div>
 	<!-- HTML TREE PARSE -->
 <!-- MODAL -->
-    <div class="clear"></div>
-    
-    <div id="rules-container">
-        <div id="" class="js_items" style="display:none;" ></div>
-    </div>
-    
+
+
 	<div class="clear"></div>
+	
+		<div class="container-fluid">
+				<div id="js_block"></div>
+		</div>
+	<div class="clear"></div>
+</div>
 	<div id="loader" class="popup2">
 		<img src="images/ajax-loader2.gif" />
 	</div>
+</body>
+<script type="text/javascript" src="js/common.js" ></script>
+<script type="text/javascript" src="js/main.js" ></script>
 
-    <!-- Bootstrap core JavaScript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script src="js/jquery.min.js"></script>
-    <script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery.min.js"><\/script>')</script>
-    <script src="js/bootstrap.min.js"></script>
-    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-    <script src="js/ie10-viewport-bug-workaround.js"></script>
-	<!-- https://github.com/finom/vanillatree -->
-	<link href="js/vanillatree/vanillatree.css" rel="stylesheet" />
-	<script src="js/vanillatree/vanillatree.js"></script>
-    
-    <script type="text/javascript" src="js/common.js" ></script>
-    <script type="text/javascript" src="js/main2.js" ></script>
-  
-
-</body></html>
+</html>
