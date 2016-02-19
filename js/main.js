@@ -56,7 +56,11 @@ var ParseEdit = {
 		
 		$('.js_set_item').on('click', function(e){
 			e.preventDefault();
-			setItem();
+            var type = $('#itemNameParseModal select[name="type"]').val();
+            var name = $('#itemNameParseModal input[name="name"]').val();
+            var attr =  $('#itemNameParseModal .js_attr').val() || null;
+            var parent = $('#itemNameParseModal .js_parent').val() || null;
+            setItem({type:type,name:name,attr:attr,parent:parent});
 			return false;
 		});
 		/**EDIT PARSE**/		

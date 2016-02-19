@@ -8,7 +8,7 @@
     <meta name="author" content="">
     <link rel="icon" href="https://getbootstrap.com/favicon.ico">
 
-    <title>Fixed Top Navbar Example for Bootstrap</title>
+    <title>Parser GUI</title>
 
     <!-- Bootstrap core CSS -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
@@ -49,19 +49,22 @@
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
-            <li>	
-				<form class="form-inline">
-					<div class="form-group">
-						<label class="sr-only" for="js_url" >Url page</label>
-						<input type="text" name="url" class="js_url" value="" placeholder="Url page" style="width: 300px;"/>
-					</div>
-					<button class="btn js_loadpage_nourl" title="refrash"><i class="icon-repeat"></i></button>
-				</form>
+            <li>
+                <div class="row pt_10">
+                    <div class="col-lg-8">  
+				        <input type="text" name="url" class="js_url" value="" placeholder="Url page" style="width: 200px;"/>
+				     </div>
+                     <div class="col-lg-3">  
+                        <button class="js_loadpage_nourl" title="refrash"><i class="icon-repeat"></i></button>
+                     </div>
+                </div>
             </li>
             <li>
-				<div>
-					<input type="radio" name="request" value="curl" checked="checked"> Curl<Br>
-					<input type="radio" name="request" value="phantomjs"> phantomjs
+                <div class="row pt_5">
+                    <div  class="pr_15">
+                        <input type="radio" name="request" value="curl" checked="checked"> Curl<Br>
+                        <input type="radio" name="request" value="phantomjs"> phantomjs
+                    </div>
 				</div>
             </li>
             <li class="dropdown">
@@ -89,10 +92,13 @@
             </li>
           </ul>
           <ul class="nav navbar-nav navbar-right">
-            <li><div class="js_extractor extractor btn_view " style=""></div></li>
-            <li><div class="model btn_view " style=""></div></li>
-            <li><div class="res btn_view " style=""></div></li>
-            <li><button class="btn js_save_rule"  >Done</button></a></li>
+            <li><div class="row pt_10">
+                <div class="col-lg-3 js_pagination icon-pagination btn_view " title="Pagination" style=""></div>
+                <div class="col-lg-3 js_extractor icon-extractor btn_view " title="Extractor" style=""></div>
+                <div class="col-lg-3 js_data_model icon-model btn_view " title="Data model" style=""></div>
+                <div class="col-lg-3 js_data_raw icon-res btn_view " title="Raw Data" style=""></div>
+                <div  class="col-lg-3"><button class="btn btn-default btn-xs js_save_rule"  >Done</button><div>
+             </li>
           </ul>
         </div><!--/.nav-collapse -->
       </div>
@@ -110,9 +116,12 @@
     
 <!-- RESULT -->
 <template id="js_parse_res" style="display:none">
-		<div id="script-container" class="container">			
-			<textarea id="script" class="ldt-input js_rule_res" wrap="off" spellcheck="false" style="margin: 0px; width: 1151px;  height: 431px;"></textarea>
-		</div>	
+		<div id="script-container" class="container">	
+            <div class="white">Rule</div>		
+			<div>
+                <textarea id="script" class="ldt-input js_rule_res" wrap="off" spellcheck="false" style="margin: 0px; width: 1151px;  height: 431px;"></textarea>
+		    </div>
+        </div>	
 </template>
 <!-- RESULT --> 
     
@@ -134,7 +143,6 @@
 							<label for="exampleInputName2">Тип</label>
 							<select class="form-control type js_type selattr" name="type" id="exampleInputName2">
 								<option value=""></option>
-								<option value="link">Ссылка</option>
 								<option value="text">Текст</option>
 								<option value="html">HTML</option>
 								<option value="img">Картинка</option>
@@ -246,7 +254,9 @@
 	<!-- https://github.com/finom/vanillatree -->
 	<link href="js/vanillatree/vanillatree.css" rel="stylesheet" />
 	<script src="js/vanillatree/vanillatree.js"></script>
-    
+	<!-- https://select2.github.io/ -->
+	<link href="js/select2/dist/css/select2.min.css" rel="stylesheet" />
+	<script src="js/select2/dist/js/select2.min.js"></script>
     <script type="text/javascript" src="js/common.js" ></script>
     <script type="text/javascript" src="js/main2.js" ></script>
   
