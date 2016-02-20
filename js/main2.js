@@ -64,6 +64,7 @@ $('.js_data_model').on('click', function(e){
 
 $('.js_data_raw').on('click', function(e){
     Layer.hide();
+    getContentElement(getRule());
     Layer.show({content: document.querySelector('#js_raw_data').innerHTML  });
 });
 

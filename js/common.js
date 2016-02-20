@@ -256,7 +256,7 @@ var getTreeData =  function(el){
 		var selattr = el.querySelector('.selattr');
 		var all = document.querySelector('#js_all').checked;
 		
-		tmp[xpath.getAttribute("name")] = all ? xpath.value.replace(/\[1\]/g, '') : xpath.value;
+		tmp['path'] = all ? xpath.value.replace(/\[1\]/g, '') : xpath.value;
 		tmp[name.getAttribute("name")] = name.value;
 		tmp[attr.getAttribute("name")] = attr.value;
 		tmp[selattr.getAttribute("name")] = selattr.value;
@@ -306,11 +306,59 @@ function getRule(){
 }
 function rulessave(successfunc)
 {
-	//if (!$('#tab-script').parent().hasClass('active'))
-	//	tabScriptClick();
 	console.log(getRule());
 	_PARSE['rule'] = getRule();
 }
+
+function getContentElement(rule){
+   var res = [];
+   var doc = getIframeContent('html');
+   for(var i in rule['rule']){
+       var path = rule['rule'][i]['path'];
+       var name = rule['rule'][i]['name'];
+       var elements = getAllElement(doc, path);
+       for(var k in elements){
+            var obj = {};
+            var el = elements[k];
+            console.log(el);
+            obj[name] = el.toString();
+            res.push(obj);
+       }
+   }
+   console.log(res);
+   return res;
+}
+
+function fullPath(el){
+  var names = [];
+  while (el.parentNode){
+    if (el.id){
+      names.unshift('#'+el.id);
+      break;
+    }else{
+      if (el==el.ownerDocument.documentElement) names.unshift(el.tagName);
+      else{
+        for (var c=1,e=el;e.previousElementSibling;e=e.previousElementSibling,c++);
+        names.unshift(el.tagName+":nth-child("+c+")");
+      }
+      el=el.parentNode;
+    }
+  }
+  return names.join(" > ");
+}
+
+/**
+ * USE
+ * console.log($(fullPathSimple(document.querySelector('.post_title'))));
+ */
+function fullPathSimple(el){
+  var names = [];
+  while (el.parentNode){
+      names.unshift(el.tagName.toLowerCase());
+      el=el.parentNode;
+  }
+  return names.join(">");
+};
 
 function createXPathFromElement(elm) { 
     //var allNodes = document.getElementsByTagName('*'); 
@@ -356,6 +404,13 @@ function createXPathFromElement(elm) {
     return segs.length ? '//' + segs.join('/') : null; 
 };
 
+function getFullPatElement(el){
+    return fullPathSimple(el);
+}
+
+function getAllElement(doc, path){
+   return doc.querySelectorAll(path);
+}
 
 var isIe = /MSIE [56789]/.test(navigator.userAgent) && (navigator.platform == "Win32");
 function evaluateXPath(xpath, doc, context) {
@@ -598,22 +653,21 @@ function clickElem(e){
     var _target = e.target || e.srcElement;
     
     if(_PARSE && _PARSE.golink){
-        _PARSE.rule_xpath = createXPathFromElement(_target);
+        _PARSE.rule_xpath = getFullPatElement(_target);
         var url = $(_target).attr('href');
         if(!url) url = $(_target).parent().attr('href');
         request(url);
         //return;
     }else{
-        _PARSE.rule_xpath = createXPathFromElement(_target);
-        selectBorder(_target, 'text', e, true);
-        //limit
+        _PARSE.rule_xpath = getFullPatElement(_target);
         //document.querySelector('#js_limit').value = document.evaluate(_PARSE.rule_xpath, document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null).snapshotLength
         //attr
         $('.js_attr').html('<option value=""></option>');
         for (var i = 0, atts = _target.attributes, n = atts.length, arr = []; i < n; i++){
             fillSel('.js_attr', [{ 'text' : atts[i].nodeName , 'value' : atts[i].nodeName }]);
         }
-        
+        var doc = getIframeContent('html');
+        selectBorder(getAllElement(doc, _PARSE.rule_xpath), true);
     }
     
     return false;
@@ -653,9 +707,9 @@ function setEvenHoveredAll(html){
 					var target = e.target || e.srcElement;
 					//target.style.border = "1px solid #000";
 					target.style.background="#d3e2f0";//"#f2f2f2";
-					// console.log( createXPathFromElement(target));
+					// console.log( getFullPatElement(target));
 				   
-					hovered.innerHTML = createXPathFromElement(target);
+					hovered.innerHTML = getFullPatElement(target);
 					//_EVENT.add(this,'click',setXpath);
                     addEventListener(target, 'click', clickElem);
 				});                            
@@ -664,7 +718,7 @@ function setEvenHoveredAll(html){
                     e.preventDefault();
 					e.stopPropagation();
 					var target = e.target || e.srcElement;     
-                    target.removeEventListener('click',clickElem,false);                       
+                    target.removeEventListener('click', clickElem, false);                       
 					//this.style.border = "none";
 					this.style.background="";
 				});
@@ -673,21 +727,17 @@ function setEvenHoveredAll(html){
 	}
 }
 
-function selectBorder(elem, type, e, dialog)
+function selectBorder(elems, dialog)
 {
 	if (dialog == undefined || dialog == true)
 	{
 		$('#itemNameParseModal').modal('show');
-		//$('#itemNameParseModal').css('left', e.clientX+50).css('top', e.clientY+10).fadeIn('slow');
-		//$('#itemNameParseModal').css('top', e.clientY+10).fadeIn('slow');
 	}	
-	
-	$(elem).data('oldstyle2', $(elem).css('border'));
-	$(elem).data('selected', 1);
-	$(elem).css('border', '3px dashed red');
-
+    for(var i in elems){
+        var element = elems[i];
+        $(element).css('border', '3px dashed red');       
+    }
 }
-
 
 function hasClass(ele,cls) {
 	return ele.className.match(new RegExp('(\\s|^)'+cls+'(\\s|$)'));
@@ -1105,7 +1155,7 @@ TreeComponentClass.prototype = {
     		$(obj.node).data('oldstyle3', $(obj.node).getStyleObject());
     		$(obj.node).data('selected2', 1);
     		$(obj.node).css('border', '3px dashed blue');
-    		var xpath = createXPathFromElement(obj.node);
+    		var xpath = getFullPatElement(obj.node);
     		//$('#htmltree input[name="xpath"]').val(xpath);
     		$('.js_htmltree textarea[name="xpath"]').val(xpath);
     	}
