@@ -6,7 +6,7 @@
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
     <meta name="description" content="">
     <meta name="author" content="">
-    <link rel="icon" href="https://getbootstrap.com/favicon.ico">
+    <link rel="icon" href="favicon.ico">
 
     <title>Parser GUI</title>
 
@@ -52,9 +52,9 @@
             <li>
                 <div class="row pt_10">
                     <div class="col-lg-8">  
-				        <input type="text" name="url" class="js_url" value="" placeholder="Url page" style="width: 200px;"/>
+				        <input type="text" name="url" class="js_url" value="" placeholder="Url page"/>
 				     </div>
-                     <div class="col-lg-3">  
+                     <div class="col-lg-2">  
                         <button class="js_loadpage_nourl" title="refrash"><i class="icon-repeat"></i></button>
                      </div>
                 </div>
@@ -62,13 +62,13 @@
             <li>
                 <div class="row pt_5">
                     <div  class="pr_15">
-                        <input type="radio" name="request" value="curl" checked="checked"> Curl<Br>
+                        <input type="radio" name="request" value="curl" checked="checked"> curl<Br>
                         <input type="radio" name="request" value="phantomjs"> phantomjs
                     </div>
 				</div>
             </li>
             <li class="dropdown">
-              <a href="/#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Settings <span class="caret"></span></a>
+              <a href="/#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="icon-gear" title="Settings"></span> <span class="caret"></span></a>
               <ul class="dropdown-menu" style="padding:0 0 0 30px;">
                 <li>
                     <div class="checkbox">
@@ -114,7 +114,7 @@
     
     
     
-<!-- RESULT -->
+<!-- RULE -->
 <template id="js_parse_res" style="display:none">
 		<div id="script-container" class="container">	
             <div class="white">Rule</div>		
@@ -123,7 +123,66 @@
 		    </div>
         </div>	
 </template>
-<!-- RESULT --> 
+<!-- RULE --> 
+
+<!-- MODEL DATA -->
+<template1 id="js_model_data" style="display:none">
+		<div id="" class="container white">	
+            <div class="collection_info">
+                <div calass="row">
+                    <div class="col-md-4">
+                        <h1>Collection</h1>
+                        <ul class="nav nav-pills">
+                            <li role="presentation" class="active" ><a href="#edit"  role="tab" data-toggle="tab" >Edit</a></li>
+                            <li role="presentation" ><a href="#profile"  role="tab" data-toggle="tab" >Profile</a></li>
+                        </ul>
+                     </div>
+                    <div class="col-md-8">
+                        <div class="tab-content">
+                                <div class="tab-pane fade active in" id="edit">
+                                        <h2>EDIT</h2>
+                                </div> 
+                                <div class="tab-pane fade" id="profile">
+                                    <h2>Profile Content Goes Here</h2>
+                                    <img src="http://lorempixel.com/400/400/cats/2" alt="Cats"/>
+                                </div> 
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>	
+</template1>
+<!-- MODEL DATA --> 
+
+<!-- RAW DATA -->
+<template id="js_raw_data" style="display:none">
+		<div id="" class="container white">	
+            <div class="collection_info">
+                <div calass="row">
+                    <div class="col-md-4">
+                        <h1>Collection</h1>
+                        <ul class="nav nav-pills"">
+                            <li role="presentation" class="active" ><a href="#messages"  role="tab" data-toggle="tab" >Messages</a></li>
+                            <li role="presentation" ><a href="#settings"  role="tab" data-toggle="tab" >Settings</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-md-8">
+                        <div class="tab-content">
+                                <div class="tab-pane fade active in" id="messages">
+                                    <h2>Messages Content Goes Here</h2>
+                                    <img src="http://lorempixel.com/400/400/cats/3" alt="Cats"/>
+                                </div>
+                                <div class="tab-pane fade" id="settings">
+                                    <h2>Settings Content Goes Here</h2>
+                                    <img src="http://lorempixel.com/400/400/cats/4" alt="Cats"/>
+                                </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>	
+</template>
+<!-- RAW DATA --> 
     
 <!-- MODAL -->
 	<!-- ITEM NAME PARSE -->
@@ -233,12 +292,11 @@
 	<!-- HTML TREE PARSE -->
 <!-- MODAL -->
     <div class="clear"></div>
-    
     <div id="rules-container">
         <div id="" class="js_items" style="display:none;" ></div>
-    </div>
+    </div>    
+    <div class="clear"></div>
     
-	<div class="clear"></div>
 	<div id="loader" class="popup2">
 		<img src="images/ajax-loader2.gif" />
 	</div>
