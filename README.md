@@ -1,2 +1,2 @@
 # XPATH-GUI
-xpath gui for parser generate rule(xpath)  html, js, jsonp
+gui for parser generate rule (xpath or css selector) used  html, js, jsonp
