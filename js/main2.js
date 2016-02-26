@@ -20,6 +20,7 @@ $('#js_base_btn').change( function() {
         setEvenHoveredAll(html);
     }
 });
+
 $('.js_loadpage_nourl').on('click', function(e){
     e.preventDefault();
     var url = document.querySelector('input.js_url').value;//_PARSE.url;
@@ -39,6 +40,12 @@ $('#js_golink').on('click', function(e){
     //e.preventDefault();
     _PARSE.golink = !_PARSE.golink;
 });
+
+$('#js_path_type').on('click', function(e){
+    //e.preventDefault();
+    _PARSE.path_type = !_PARSE.path_type;
+});
+
 
 $('.js_pagination').on('click', function(e){
     //e.preventDefault();

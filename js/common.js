@@ -291,7 +291,6 @@ var getTreeData =  function(el){
 	}
 }
 function getRule(){
-
     var elements = document.querySelector('.vtree');
     var data = getTreeData(elements); 
     var url = $('input.js_url').val();
@@ -299,9 +298,10 @@ function getRule(){
     var host = parseURL(url);
     var domen = host.protocol + '://' + host.host;
     var type = _PARSE.type;
+    var path_type = _PARSE.path_type;
 	var all = document.querySelector('#js_all').checked;
     var limit = document.querySelector('#js_limit').value || 1;
-	return {'url':url, 'all':all, 'rule':data,'host':host['host'], 'name':name, 'domen':domen, 'limit':limit}
+	return {'url':url, 'all':all, 'rule':data,'host':host['host'], 'name':name, 'domen':domen, 'limit':limit, 'path_type':path_type}
 
 }
 function rulessave(successfunc)
@@ -405,6 +405,8 @@ function createXPathFromElement(elm) {
 };
 
 function getFullPatElement(el){
+    if(_PARSE.path_type)
+         return createXPathFromElement(el);
     return fullPathSimple(el);
 }
 
@@ -606,6 +608,7 @@ var _PARSE = (function () {
 			'table',
 		],
 		golink : null,
+        path_type : 0, // 0 css selector 1 xpath
 		clear_name : null,
 		addRule : add,
 	};
