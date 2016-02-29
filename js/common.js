@@ -304,29 +304,28 @@ function getRule(){
 	return {'url':url, 'all':all, 'rule':data,'host':host['host'], 'name':name, 'domen':domen, 'limit':limit, 'path_type':path_type}
 
 }
-function rulessave(successfunc)
+function rulessave()
 {
 	console.log(getRule());
 	_PARSE['rule'] = getRule();
 }
 
 function getContentElement(rule){
-   var res = [];
+   var obj = {};
    var doc = getIframeContent('html');
    for(var i in rule['rule']){
        var path = rule['rule'][i]['path'];
        var name = rule['rule'][i]['name'];
+       obj[name] = [];
        var elements = getAllElement(doc, path);
-       for(var k in elements){
-            var obj = {};
+       for(var k in elements){     
             var el = elements[k];
-            console.log(el);
-            obj[name] = el.toString();
-            res.push(obj);
+            if(typeof el  == 'object')
+                obj[name].push(el.innerHTML);
        }
    }
-   console.log(res);
-   return res;
+   console.log(obj);
+   return obj;
 }
 
 function fullPath(el){
@@ -354,7 +353,13 @@ function fullPath(el){
 function fullPathSimple(el){
   var names = [];
   while (el.parentNode){
-      names.unshift(el.tagName.toLowerCase());
+      if(el.hasAttribute('class')){
+          names.unshift(el.tagName.toLowerCase() +'.'+ el.getAttribute('class').replace(/ /g, "."));
+      }else if(el.hasAttribute('id')){
+           names.unshift(el.tagName.toLowerCase() +'#'+ el.getAttribute('id'));
+      }else{
+          names.unshift(el.tagName.toLowerCase());
+      }
       el=el.parentNode;
   }
   return names.join(">");
