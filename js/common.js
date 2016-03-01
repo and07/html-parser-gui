@@ -196,7 +196,7 @@ var formatJSON = function (text) {
 
 function tabRuleClick()
 {
-	var data = formatJSON(JSON.stringify(_PARSE.rule));
+	var data = formatJSON(JSON.stringify(getRule()));
 	$('.js_rule_res').val(data);
 }
 
@@ -245,54 +245,23 @@ function parseURL(url) {
         segments: a.pathname.replace(/^\//,'').split('/'),
 
     };
-}
-var getTreeData =  function(el){
-    if(!el) return [];
-	var getData = function(el){
-		var tmp = {};
-		var xpath = el.querySelector('.xpath');
-		var name = el.querySelector('.name');
-		var attr = el.querySelector('.attr');
-		var selattr = el.querySelector('.selattr');
-		var all = document.querySelector('#js_all').checked;
-		
-		tmp['path'] = all ? xpath.value.replace(/\[1\]/g, '') : xpath.value;
-		tmp[name.getAttribute("name")] = name.value;
-		tmp[attr.getAttribute("name")] = attr.value;
-		tmp[selattr.getAttribute("name")] = selattr.value;
-		return tmp;
-	}
-	
-	var sub_el = '.vtree-subtree';
-	if(el.tagName){
-		//obj[el.tagName] = [];
-		var arr = [];
-        if(el.childNodes){
-            var cnt = el.children.length;
-            if(cnt > 0){
-                for(var i=0; i<cnt;i++){
-                    var child = el.children[i];
-                    if(child.querySelector(sub_el)){
-                        var tmp = getData(child);
-                        tmp['children'] = {};
-                    
-                        //obj[el.tagName]['children']['parent'] = tmp;
-                                    
-                        tmp['children'] = getTreeData(child.querySelector(sub_el) );
-                        arr.push(tmp);
-                    }else{
-                        var tmp = getData(child);
-                        arr.push(tmp);
-                    }
-                }
+};
+
+function getNestedChildren(arr, parent) {
+    var out = [];
+    for(var i in arr) {
+        if(arr[i].parent == parent) {
+            var children = getNestedChildren(arr, arr[i].name);
+            if(children.length) {
+                arr[i].children = children;
             }
+            out.push(arr[i]);
         }
-		return arr;
-	}
-}
+    }
+    return out;
+};
+
 function getRule(){
-    var elements = document.querySelector('.vtree');
-    var data = getTreeData(elements); 
     var url = $('input.js_url').val();
     var name =  $('.js_parse_name').text();
     var host = parseURL(url);
@@ -301,21 +270,66 @@ function getRule(){
     var path_type = _PARSE.path_type;
 	var all = document.querySelector('#js_all').checked;
     var limit = document.querySelector('#js_limit').value || 1;
-	return {'url':url, 'all':all, 'rule':data,'host':host['host'], 'name':name, 'domen':domen, 'limit':limit, 'path_type':path_type}
+	return {'url':url, 'all':all, 'rule':getNestedChildren(_PARSE.rule, null), 'host':host['host'], 'name':name, 'domen':domen, 'limit':limit, 'path_type':path_type};
+};
 
-}
-function rulessave()
-{
-	console.log(getRule());
-	_PARSE['rule'] = getRule();
-}
+function rows2cols(a) {
+  var r = [];
+  var t;
+
+  for (var i=0, iLen=a.length; i<iLen; i++) {
+    t = a[i];
+
+    for (var j=0, jLen=t.length; j<jLen; j++) {
+      if (!r[j]) {
+        r[j] = [];
+      }
+      r[j][i] = t[j];
+    }
+  }
+  return r;
+};
+
+function formatData (data){
+  var arr = [];
+  var tmp = [];
+  var new_data = [];
+  for(var i in data){
+    tmp.push(i);
+    new_data.push(data[i]);
+  }
+  arr.push(tmp);
+
+  var res = rows2cols(new_data);
+  for(var i in res){
+    arr.push(res[i]);
+  }
+  return arr;
+};
+
+function data2table(data){
+  var out = '';
+  out += '<table class="table table-bordered">';
+  for(var i  in data){
+    out += '<tr>';
+    for(var j in data[i]){
+      out += '<td>'+data[i][j]+'</td>';
+    }
+    out += '</tr>';
+  }
+  out += '</table>';
+  return out;
+};
 
 function getContentElement(rule){
    var obj = {};
    var doc = getIframeContent('html');
-   for(var i in rule['rule']){
-       var path = rule['rule'][i]['path'];
-       var name = rule['rule'][i]['name'];
+   for(var i in rule){
+       var r = rule[i];
+       if(r['children'])
+            return getContentElement(r['children']);
+       var path = r['path'];
+       var name = r['name'];
        obj[name] = [];
        var elements = getAllElement(doc, path);
        for(var k in elements){     
@@ -324,9 +338,8 @@ function getContentElement(rule){
                 obj[name].push(el.innerHTML);
        }
    }
-   console.log(obj);
    return obj;
-}
+};
 
 function fullPath(el){
   var names = [];
@@ -344,7 +357,7 @@ function fullPath(el){
     }
   }
   return names.join(" > ");
-}
+};
 
 /**
  * USE
@@ -356,7 +369,7 @@ function fullPathSimple(el){
       if(el.hasAttribute('class')){
           names.unshift(el.tagName.toLowerCase() +'.'+ el.getAttribute('class').replace(/ /g, "."));
       }else if(el.hasAttribute('id')){
-           names.unshift(el.tagName.toLowerCase() +'#'+ el.getAttribute('id'));
+          names.unshift(el.tagName.toLowerCase() +'#'+ el.getAttribute('id'));
       }else{
           names.unshift(el.tagName.toLowerCase());
       }
@@ -628,29 +641,17 @@ function setItem(param)
 	if (param.name != '' && param.name.search(/^[A-Za-z][A-Za-z0-9_]*$/) != -1) 
 	{
 		//$('#itemNameParseModal').fadeOut('slow');
+        
         if(_PARSE.rule_xpath){
+           
             $('#itemNameParseModal').modal('hide');
-            var scnt = _PARSE.addRule(param.parent);
-            var parent_id = 'tree_'+scnt;
-
-            var el = document.querySelector('#tree_item_' + scnt);
-            
-            var js_xpath = el.querySelector('.xpath');
-            var v_xpath = _PARSE.rule_xpath || '';
-            v_xpath = v_xpath.replace(' parse_sel_el','');
-            v_xpath = v_xpath.replace('[@class=""]','');
-            v_xpath = v_xpath.replace('[@class=""]','');
-            js_xpath.value = v_xpath;
-            
-            //document.querySelector('[data-vtree-id = "'+parent_id+'"]');
-            
-            el.querySelector('.type').value = param.type;
-            el.querySelector('.name').value = param.name;
-            el.querySelector('.attr').value = param.attr;
-            
-            fillSel('.js_parent', [{'text' : param.name , 'value' : parent_id}]);
+            param['path'] = _PARSE.rule_xpath;
+            _PARSE.rule.push(param);
+            fillSel('.js_parent', [{'text' : param.name , 'value' : param.name}]);
         }
-	}
+	}else{
+        alert('Error: name');
+    }
     return;
 }
 

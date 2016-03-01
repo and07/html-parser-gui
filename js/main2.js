@@ -31,7 +31,7 @@ $('.js_loadpage_nourl').on('click', function(e){
 $('.js_save_rule').on('click', function(e){
     e.preventDefault();
     Layer.hide();
-    rulessave();
+    //rulessave();
     Layer.show({content: document.querySelector('#js_parse_res').innerHTML });
     tabRuleClick();
 });
@@ -71,8 +71,9 @@ $('.js_data_model').on('click', function(e){
 
 $('.js_data_raw').on('click', function(e){
     Layer.hide();
-    getContentElement(getRule());
     Layer.show({content: document.querySelector('#js_raw_data').innerHTML  });
+    var table = data2table(formatData(getContentElement(getRule()['rule'])));
+    $('#js_data_res_table').html(table);
 });
 
 
