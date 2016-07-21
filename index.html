@@ -8,7 +8,7 @@
     <meta name="author" content="">
     <link rel="icon" href="favicon.ico">
 
-    <title>Parser GUI</title>
+    <title>HTML Parser GUI</title>
 
     <!-- Bootstrap core CSS -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
@@ -52,7 +52,7 @@
             <li>
                 <div class="row pt_10">
                     <div class="col-lg-8">  
-				        <input type="text" name="url" class="js_url" value="" placeholder="Url page"/>
+				        <input type="text" name="url" class="js_url" value="" placeholder="https://example.com"/>
 				     </div>
                      <div class="col-lg-2">  
                         <button class="js_loadpage_nourl" title="refrash"><i class="icon-repeat"></i></button>
@@ -146,6 +146,10 @@
                         <div class="tab-content">
                                 <div class="tab-pane fade active in" id="edit">
                                         <h2>EDIT</h2>
+                                        <div class="clear"></div>
+                                        <div id="rules-container">
+                                            <div id="" class="js_items" ></div>
+                                        </div>
                                 </div> 
                                 <div class="tab-pane fade" id="profile">
                                     <h2>Profile Content Goes Here</h2>
@@ -296,10 +300,7 @@
 	</div>
 	<!-- HTML TREE PARSE -->
 <!-- MODAL -->
-    <div class="clear"></div>
-    <div id="rules-container">
-        <div id="" class="js_items" style="display:none;" ></div>
-    </div>    
+
     <div class="clear"></div>
     
 	<div id="loader" class="popup2">

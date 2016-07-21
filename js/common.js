@@ -474,36 +474,7 @@ var _PARSE = (function () {
 	var tree = null;
 	var _selID = null;
 
-	function createItem() {
-		scnt++;
-		var id = 'div#tree_item_'+scnt+'';
-		var _xpath = 'xpath';
-		var _name = 'name';
-		var _type = 'type';
-		var _attr = 'attr';
-		return v(id, {}, [ 
-				v('div.row', {}, [
-					v( 'div.col-xs-2',{},[
-						v('input.form-control.type.selattr',{name:_type,'disabled':"disabled"}),
-					]),
-					v( 'div.col-xs-2',{},[
-						v('input.form-control.name',{type:'text',placeholder:'Name',name:_name,'disabled':"disabled"}),
-					]),
-					v( 'div.col-xs-4',{},[				
-						v('input.form-control.xpath',{type:'text',placeholder:'Xpath',name:_xpath,'disabled':"disabled"}),
-					]),
-					v( 'div.col-xs-4',{},[				
-						v('input.form-control.attr',{type:'hidden',placeholder:'Attr',name:_attr,'disabled':"disabled"}),
-					]),					
-					v( 'div.col-xs-1',{},[		
-						v("button.btn.btn-default#edit_item", { onclick: editItem, 'data-id':id}, "EditItem"),
-					]),
-					v( 'div.col-xs-1',{},[	
-						v('button.btn.del',{onclick: delItem, 'data-id':id},'X'),
-					]),
-				]),
-		]);
-	};
+
 	
 	function setValTree(el,key,val){
 		el.querySelector('.'+key).value = val;
@@ -632,6 +603,73 @@ var _PARSE = (function () {
 	};
 
 })();
+
+
+function makeTree(){
+
+	var editItem = function (){
+		var el = document.querySelector($(this).attr('data-id'));
+		$('.js_set_xpath').attr('data-id', $(this).attr('data-id'));
+		htmltree(el);
+	}
+	var delItem = function (){
+		var id = $($(this).attr('data-id')).parent().attr('data-vtree-id');
+		_PARSE.rule_name = null;
+		_PARSE.rule_type = null;
+		_PARSE.rule_xpath = null;
+		if(tree){
+			tree.remove(id);
+		}
+		
+	}	
+	function createItem(data) {
+		scnt++;
+		var id = 'div#tree_item_'+scnt+'';
+		var _xpath = 'xpath';
+		var _name = 'name';
+		var _type = 'type';
+		var _attr = 'attr';
+		return v(id, {}, [ 
+				v('div.row', {}, [
+					v( 'div.col-xs-2',{},[
+						v('input.form-control.type.selattr',{value:data.type ,name:_type,'disabled':"disabled"}),
+					]),
+					v( 'div.col-xs-2',{},[
+						v('input.form-control.name',{value:data.name ,type:'text',placeholder:'Name',name:_name,'disabled':"disabled"}),
+					]),
+					v( 'div.col-xs-4',{},[				
+						v('input.form-control.xpath',{value:data.path ,type:'text',placeholder:'Xpath',name:_xpath,'disabled':"disabled"}),
+					]),
+					v( 'div.col-xs-4',{},[				
+						v('input.form-control.attr',{type:'hidden',placeholder:'Attr',name:_attr,'disabled':"disabled"}),
+					]),					
+					v( 'div.col-xs-1',{},[		
+						v("button.btn.btn-default#edit_item", { onclick: editItem, 'data-id':id}, "EditItem"),
+					]),
+					v( 'div.col-xs-1',{},[	
+						v('button.btn.del',{onclick: delItem, 'data-id':id},'X'),
+					]),
+				]),
+		]);
+	};
+
+	var scnt = 1;
+	$('.js_items').attr('id','js_items_'+scnt);
+	var tree = new VanillaTree( '#js_items_'+scnt, {});
+	var obj = _PARSE.rule;
+	for(var i in obj){ 
+		var pid = obj[i].parent || null; 
+		tree.add({
+			el: createItem(obj[i]),
+			id: obj[i].name,
+			label:'aa'+i,
+			parent :pid,
+			opened: true
+		});
+	}
+
+}
+
 
 /***RULE***/
 

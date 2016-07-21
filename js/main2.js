@@ -67,6 +67,7 @@ $('.js_extractor').on('click', function(e){
 $('.js_data_model').on('click', function(e){
     Layer.hide();
     Layer.show({content: document.querySelector('#js_model_data').innerHTML});
+    makeTree();
 });
 
 $('.js_data_raw').on('click', function(e){
