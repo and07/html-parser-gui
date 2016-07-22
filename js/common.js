@@ -287,6 +287,18 @@ function getNestedChildren(arr, parent) {
     return out;
 };
 
+function deepCopy(o) {
+    var copy = o,k;
+ 
+    if (o && typeof o === 'object') {
+        copy = Object.prototype.toString.call(o) === '[object Array]' ? [] : {};
+        for (k in o) {
+            copy[k] = deepCopy(o[k]);
+        }
+    }
+    return copy;
+}
+
 function getRule(){
     var url = $('input.js_url').val();
     var name =  $('.js_parse_name').text();
@@ -296,7 +308,8 @@ function getRule(){
     var path_type = _PARSE.path_type;
 	var all = document.querySelector('#js_all').checked;
     var limit = document.querySelector('#js_limit').value || 1;
-	return {'url':url, 'all':all, 'rule':getNestedChildren(_PARSE.rule, null), 'host':host['host'], 'name':name, 'domen':domen, 'limit':limit, 'path_type':path_type};
+	var rule = deepCopy(_PARSE.rule.slice());
+	return {'url':url, 'all':all, 'rule':getNestedChildren(rule, null), 'host':host['host'], 'name':name, 'domen':domen, 'limit':limit, 'path_type':path_type};
 };
 
 function rows2cols(a) {
