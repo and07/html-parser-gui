@@ -1,5 +1,32 @@
 "use strict";
 
+/***RULE***/
+var _PARSE = {
+		sites : [],
+		url : null,
+		html : null,
+		name : null,
+		date_edit : null,
+		rule_name : null,
+		rule_type : null,
+		rule_path : null,
+		page:null,
+        pages: {},
+		doc : null,
+		rule : [],
+		seltype : [
+			'',
+			'link',
+			'text',
+			'html',
+			'img',
+			'table',
+		],
+		golink : null,
+        path_type : 0, // 0 css selector 1 xpath
+		clear_name : null,
+};
+
 var getElementByXpathAll = function(xpathToExecute){
   var result = [];
   var nodesSnapshot = document.evaluate(xpathToExecute, document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null );
@@ -28,9 +55,8 @@ var jsonp_set_html = function(data) {
 	_PARSE.golink = false;
     setItem({type:'link', name:'pagination', attr:null, parent:null});
 	var html = populateIframe('html', data.res);
-    var obj = {};
-    obj[data.url] = data.res;
-    _PARSE.pages.push(obj)
+	_PARSE.page = data.url;
+    _PARSE.pages[data.url] = data.res;
 	setEvenHoveredAll(html);
 	//removeClass(document.querySelector('#js_golink'),'active');
 	document.querySelector('#js_golink').checked = false;
@@ -464,159 +490,26 @@ function evaluateXPath(xpath, doc, context) {
     return nodes;
 }
 
-
-/***RULE***/
-var _PARSE = (function () {
-	var self = this;
-	
-	var cnt = 0;
-	var scnt = 0;
-	var tree = null;
-	var _selID = null;
-
-
-	
-	function setValTree(el,key,val){
-		el.querySelector('.'+key).value = val;
-	}
-	
-	function createTreeItem(data,parent_id){
-		if(!tree){
-			tree = new VanillaTree( '#js_items_'+_PARSE.clear_name, {});         
-		}
-		for(var i in data){
-			tree.add({
-			  el: createItem(),
-			  id: 'tree_'+scnt,
-			  opened: true,
-			  parent :parent_id,
-			});
-			var el = document.querySelector('#tree_item_' + scnt);
-			for(var key in data[i]){
-				if(key == 'children') continue;
-				setValTree(el,key,data[i][key]);
-			}
-			if(data[i].children){
-				createTree(data[i].children,'tree_'+scnt);
-			}
-			fillSel('.js_parent', [{'text' : data[i]['name'] , 'value' : 'tree_'+scnt}]);
-		}
-	};
-	
-	var addSubItem = function(e){
-		//e = e || event;
-		//var target = e.target || e.srcElement;
-		//var d_id = '#'+$(target).parent().attr('id');
-		if(tree){
-				//var tree = new VanillaTree( d_id, {});
-				tree.add({
-				  el: createItem(),
-				  id: 'tree_'+scnt,
-				  label:'aa'+scnt,
-				  parent :_selID,
-				  opened: true
-				}); 
-				return scnt;
-		  }
-			return null;
-	};
-
-	var addItem = function(e){
-		if(!tree){
-			$('.js_items').attr('id','js_items_'+scnt);
-			tree = new VanillaTree( '#js_items_'+scnt, {});
-			document.querySelector('#js_items_'+scnt).addEventListener('vtree-select', function(evt) {
-				_selID = evt.detail.id;
-			});            
-		}
-		tree.add({
-		  el: createItem(),
-		  id: 'tree_'+scnt,
-		  opened: true
-		});
-		return scnt; 
-	};
-	var editItem = function (){
-		var el = document.querySelector($(this).attr('data-id'));
-		$('.js_set_xpath').attr('data-id', $(this).attr('data-id'));
-		htmltree(el);
-	}
-	var delItem = function (){
-		var id = $($(this).attr('data-id')).parent().attr('data-vtree-id');
-		_PARSE.rule_name = null;
-		_PARSE.rule_type = null;
-		_PARSE.rule_xpath = null;
-		if(tree){
-			tree.remove(id);
-		}
-		
-	}
-	
-	var add = function(parent){
-		_selID = parent;
-		//$('.js_items').attr('id','js_items_'+_PARSE.id);
-		if(_selID){
-			return addSubItem();
-		}else{
-			return addItem();
-		}
-	};
-	
-	var createTree = function(data,parent_id){
-		createTreeItem(data,parent_id);
-	};
-	var getSite = function(){
-		return sites;
-	};
-	var getExportRules = function(name){
-		for(var i in sites.export){
-			if(sites.export[i][name]){
-				return sites.export[i][name]
-			}
-		}
-		
-	};
-	return {
-		sites : [],
-		_url : null,
-		_html : null,
-		_name : null,
-		_date_edit : null,
-		_rule_name : null,
-		_rule_type : null,
-		_rule_xpath : null,
-        pages: [],
-		doc : null,
-		rule : [],
-		seltype : [
-			'',
-			'link',
-			'text',
-			'html',
-			'img',
-			'table',
-		],
-		golink : null,
-        path_type : 0, // 0 css selector 1 xpath
-		clear_name : null,
-		addRule : add,
-	};
-
-})();
-
-
 function makeTree(){
-
+	$('.js_items').html('');
 	var editItem = function (){
 		var el = document.querySelector($(this).attr('data-id'));
-		$('.js_set_xpath').attr('data-id', $(this).attr('data-id'));
+		$('.js_set_path').attr('data-id', $(this).attr('data-id'));
 		htmltree(el);
 	}
 	var delItem = function (){
+		
 		var id = $($(this).attr('data-id')).parent().attr('data-vtree-id');
+		var name = document.querySelector($(this).attr('data-id')).querySelector('.name').value;
+		var rule = [];
+		for(var obj of _PARSE.rule){
+			if(obj.name == name) continue;
+			rule.push(obj);
+		}
+		_PARSE.rule = rule;
 		_PARSE.rule_name = null;
 		_PARSE.rule_type = null;
-		_PARSE.rule_xpath = null;
+		_PARSE.rule_path = null;
 		if(tree){
 			tree.remove(id);
 		}
@@ -625,7 +518,7 @@ function makeTree(){
 	function createItem(data) {
 		scnt++;
 		var id = 'div#tree_item_'+scnt+'';
-		var _xpath = 'xpath';
+		var _path = 'path';
 		var _name = 'name';
 		var _type = 'type';
 		var _attr = 'attr';
@@ -638,13 +531,13 @@ function makeTree(){
 						v('input.form-control.name',{value:data.name ,type:'text',placeholder:'Name',name:_name,'disabled':"disabled"}),
 					]),
 					v( 'div.col-xs-4',{},[				
-						v('input.form-control.xpath',{value:data.path ,type:'text',placeholder:'Xpath',name:_xpath,'disabled':"disabled"}),
+						v('input.form-control.path',{value:data.path ,type:'text',placeholder:'path',name:_path,'disabled':"disabled"}),
 					]),
 					v( 'div.col-xs-4',{},[				
 						v('input.form-control.attr',{type:'hidden',placeholder:'Attr',name:_attr,'disabled':"disabled"}),
 					]),					
 					v( 'div.col-xs-1',{},[		
-						v("button.btn.btn-default#edit_item", { onclick: editItem, 'data-id':id}, "EditItem"),
+						v("button.btn.btn-default", { onclick: editItem, 'data-id':id}, "EditItem"),
 					]),
 					v( 'div.col-xs-1',{},[	
 						v('button.btn.del',{onclick: delItem, 'data-id':id},'X'),
@@ -670,20 +563,16 @@ function makeTree(){
 
 }
 
-
-/***RULE***/
-
-
 function setItem(param)
 {
 	if (param.name != '' && param.name.search(/^[A-Za-z][A-Za-z0-9_]*$/) != -1) 
 	{
 		//$('#itemNameParseModal').fadeOut('slow');
-        
-        if(_PARSE.rule_xpath){
+        param['page'] = _PARSE.page;
+        if(_PARSE.rule_path){
            
             $('#itemNameParseModal').modal('hide');
-            param['path'] = _PARSE.rule_xpath;
+            param['path'] = _PARSE.rule_path;
             _PARSE.rule.push(param);
             fillSel('.js_parent', [{'text' : param.name , 'value' : param.name}]);
         }
@@ -700,21 +589,21 @@ function clickElem(e){
     var _target = e.target || e.srcElement;
     
     if(_PARSE && _PARSE.golink){
-        _PARSE.rule_xpath = getFullPatElement(_target);
+        _PARSE.rule_path = getFullPatElement(_target);
         var url = $(_target).attr('href');
         if(!url) url = $(_target).parent().attr('href');
         request(url);
         //return;
     }else{
-        _PARSE.rule_xpath = getFullPatElement(_target);
-        //document.querySelector('#js_limit').value = document.evaluate(_PARSE.rule_xpath, document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null).snapshotLength
+        _PARSE.rule_path = getFullPatElement(_target);
+        //document.querySelector('#js_limit').value = document.evaluate(_PARSE.rule_path, document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null).snapshotLength
         //attr
         $('.js_attr').html('<option value=""></option>');
         for (var i = 0, atts = _target.attributes, n = atts.length, arr = []; i < n; i++){
             fillSel('.js_attr', [{ 'text' : atts[i].nodeName , 'value' : atts[i].nodeName }]);
         }
         var doc = getIframeContent('html');
-        selectBorder(getAllElement(doc, _PARSE.rule_xpath), true);
+        selectBorder(getAllElement(doc, _PARSE.rule_path), true);
     }
     
     return false;
@@ -1202,9 +1091,9 @@ TreeComponentClass.prototype = {
     		$(obj.node).data('oldstyle3', $(obj.node).getStyleObject());
     		$(obj.node).data('selected2', 1);
     		$(obj.node).css('border', '3px dashed blue');
-    		var xpath = getFullPatElement(obj.node);
-    		//$('#htmltree input[name="xpath"]').val(xpath);
-    		$('.js_htmltree textarea[name="xpath"]').val(xpath);
+    		var path = getFullPatElement(obj.node);
+    		//$('#htmltree input[name="path"]').val(path);
+    		$('.js_htmltree textarea[name="path"]').val(path);
     	}
     };
     HtmlTree.onpreactive = function(tree, el)
@@ -1298,37 +1187,52 @@ function loadXMLString(txt)
 	return xmlDoc;
 }
 
+function getPropItem(name){
+	for (var el of _PARSE.rule){
+		if(el.name == name)return el;
+	}
+}
+
+function setPathItem(name,val){
+	var el = getPropItem(name);
+	el['path'] = val;
+}
+
+
+function css2xpath(selector){
+    return XPathParser.parse(selector);
+}
+
 function htmltree(elem)
 {
 	
 	$('#htmlTreeParseModal').modal('show');
 	var $win = $('.js_htmltree');
 	var name = elem.querySelector('.name').value;
-	var rule = elem.querySelector('.xpath').value;
+	var path = elem.querySelector('.path').value;
 
 	_PARSE.rule_name = elem.querySelector('.name').value;
 	_PARSE.rule_type = elem.querySelector('.type').value;
-	_PARSE.rule_xpath = elem.querySelector('.xpath').value;
+	_PARSE.rule_path = elem.querySelector('.path').value;
 	
 	//var node = PagesList.get().rules.getNodesByName(name)[0];
 	var type = 1;//parseInt(getRadioVal('type'));
 	if(type === 1){
-		var doc =  document.getElementById('html').contentWindow.document;
+		populateIframe('html_1',_PARSE.pages[getPropItem(name).page]);
+		var doc = document.getElementById('html_1').contentWindow.document;
 	}else if(type === 2){
 		var content = _PARSE.html ;
 		var doc =  loadXMLString(content);
 	}
 	_PARSE.doc = doc;
 	
-	var node = evaluateXPath(rule, doc)[0];
+	var node = evaluateXPath(css2xpath(path), doc)[0];
 
-	$win.find('textarea[name="xpath"]').val(rule);
-	$win.find('input[name="xpath"]').val(rule);
+	$win.find('textarea[name="path"]').val(path);
+	$win.find('input[name="path"]').val(path);
 	$win.find('input[name="name"]').val(name);
 	$win.find('#rulename').html('<b>'+name+'</b>');
-/*	
-	rulelables($win, rule.type);
-	*/
+
 	$win.fadeIn('slow').css('left', ($(window).width()-$win[0].offsetWidth)/2);
 	$win.css('top', ($(window).height()-$win[0].offsetHeight)/2);
 	$win.find('.popup-btns').css('top', $win[0].offsetHeight-40);
@@ -1371,25 +1275,28 @@ function htmltree(elem)
 	HtmlTree.update(data, ind);
 	
 }
+
 function trim(str)
 {
     return str.replace(/^\s+|\s+$/g,"");
 }
+
 function setHtmlTree(obj)
 {
 	var $win = $('.js_htmltree');
 	var name = $win.find('input[name="name"]').val();
-	var _path = _PARSE.rule_xpath;
-	var newpath = $win.find('textarea[name="xpath"]').val();
+	var _path = _PARSE.rule_path;
+	var newpath = $win.find('textarea[name="path"]').val();
 	
 	HtmlTree.onpreactive(HtmlTree, HtmlTree.active);
 	
 	if (_path != newpath && newpath != '')
 	{
-		_PARSE.rule_xpath = newpath;
+		_PARSE.rule_path = newpath;
 		var el = document.querySelector($(obj).attr('data-id'));
 		
-		el.querySelector('.xpath').value = newpath;
+		el.querySelector('.path').value = newpath;
+		setPathItem(name,newpath);
 	}	
 	
 	$('#htmlTreeParseModal').modal('hide');
