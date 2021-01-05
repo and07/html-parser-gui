@@ -165,9 +165,8 @@ function getIframeContent(id) {
 
 function populateIframe(id,text) {
 	var doc = getIframeContent(id);
-
 	doc.body.innerHTML = text;
-		
+	doc.src = 'javascript:window.contents';	
 	return doc;
 }
 
