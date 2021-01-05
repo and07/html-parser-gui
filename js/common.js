@@ -53,6 +53,7 @@ function addScript(el,url,param){
 
 var jsonp_set_html = function(data) {
 	_PARSE.golink = false;
+	console.log(data)
     setItem({type:'link', name:'pagination', attr:null, parent:null});
 	var html = populateIframe('html', data.res);
 	_PARSE.page = data.url;
