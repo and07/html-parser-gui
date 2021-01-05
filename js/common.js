@@ -79,7 +79,7 @@ function request(url, callback) {
 	url = encodeURIComponent(url);
 	var type_request = document.querySelector('input[name="request"]:checked').value;
 	if(type_request == 'curl'){
-		addScript(document,'https://url2data.herokuapp.com/data','?url='+url+'&jsonp=jsonp_set_html');
+		addScript(document,'https://url2data.herokuapp.com','data?url='+url+'&jsonp=jsonp_set_html');
 	}else{
 		addScript(document,'https://voyage-madame-4519.herokuapp.com/api/getHtml','?url='+url+'&callback=jsonp_set_html&time=5000');
 	}
