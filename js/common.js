@@ -23,7 +23,7 @@ var _PARSE = {
 			'table',
 		],
 		golink : null,
-        path_type : 0, // 0 css selector 1 xpath
+        path_type : 1, // 0 css selector 1 xpath
 		clear_name : null,
 };
 
@@ -82,7 +82,7 @@ function request(url, callback) {
 	if(type_request == 'curl'){
 		addScript(document,'https://url2data.herokuapp.com','data?url='+url+'&jsonp=jsonp_set_html');
 	}else{
-		addScript(document,'https://voyage-madame-4519.herokuapp.com/api/getHtml','?url='+url+'&callback=jsonp_set_html&time=5000');
+		addScript(document,'https://url2data.herokuapp.com','content?url='+url+'&jsonp=jsonp_set_html&time=5000');
 	}
 };
 
@@ -468,6 +468,9 @@ function getFullPatElement(el){
 }
 
 function getAllElement(doc, path){
+	if (_PARSE.path_type){
+		return evaluateXPath(path, doc);
+	}
    return doc.querySelectorAll(path);
 }
 
