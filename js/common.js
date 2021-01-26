@@ -23,7 +23,7 @@ var _PARSE = {
 			'table',
 		],
 		golink : null,
-        path_type : 1, // 0 css selector 1 xpath
+        path_type : 0, // 0 css selector 1 xpath
 		clear_name : null,
 };
 
